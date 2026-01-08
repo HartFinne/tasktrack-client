@@ -1,12 +1,11 @@
-import Login from "./components/Login"
-import SignUp from "./components/SignUp"
+import { Outlet } from "react-router-dom";
+
 function App() {
 
   return (
-    <>
-      {/* <SignUp /> */}
-      <Login />
-    </>
+    <div>
+      <Outlet />
+    </div>
   )
 }
 
