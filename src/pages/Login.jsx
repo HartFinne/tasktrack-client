@@ -5,6 +5,9 @@ import { Navigate } from "react-router-dom";
 
 const Login = () => {
   const { user, loading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   if (loading) return <p>Loading...</p>;
 
@@ -13,11 +16,6 @@ const Login = () => {
     if (user.role === "employee") return <Navigate to="/dashboard" replace />;
     if (user.role === "admin") return <Navigate to="/admin-dashboard" replace />;
   }
-
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const validateEmail = (value) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
