@@ -1,4 +1,52 @@
+import { useState } from "react";
+import { login } from "../api/loginApi.js";
+
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const validateEmail = (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // Email validation
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
+    // Call the login api
+    const result = await login(email, password)
+
+    if (!result.success) {
+      setError(result.error)
+    }
+
+    alert("Account login successfully!");
+    console.log("User UID:", result.uid);
+
+    {/* Restart all the input in form */ }
+    setEmail("")
+    setPassword("")
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
       <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-lg">
@@ -10,7 +58,7 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleLogin}>
 
           {/* Email Input */}
           <div>
@@ -21,6 +69,9 @@ const Login = () => {
               type="email"
               className="w-full px-5 py-3 rounded-lg border border-gray-300 text-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Enter your email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -33,8 +84,15 @@ const Login = () => {
               type="password"
               className="w-full px-5 py-3 rounded-lg border border-gray-300 text-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {error && (
+            <p className="text-red-600 text-sm text-center">{error}</p>
+          )}
 
           {/* Sign In Button */}
           <button
