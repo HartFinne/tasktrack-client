@@ -35,7 +35,8 @@ const Login = () => {
     const result = await login(email, password)
 
     if (!result.success) {
-      setError(result.error)
+      setError("auth credential invalid " + result.error)
+      return
     }
 
     alert("Account login successfully!");
