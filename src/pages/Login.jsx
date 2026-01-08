@@ -1,7 +1,20 @@
 import { useState } from "react";
 import { login } from "../api/loginApi.js";
+import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const Login = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) return <p>Loading...</p>;
+
+  // Redirect based on role
+  if (user) {
+    if (user.role === "employee") return <Navigate to="/dashboard" replace />;
+    if (user.role === "admin") return <Navigate to="/admin-dashboard" replace />;
+  }
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

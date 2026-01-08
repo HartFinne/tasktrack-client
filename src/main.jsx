@@ -5,8 +5,13 @@ import App from './App.jsx'
 import { AuthProvider } from "./context/AuthContext.jsx"
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Login from './components/Login.jsx'
-import SignUp from './components/SignUp.jsx'
+import Login from './pages/Login.jsx'
+import SignUp from './pages/SignUp.jsx'
+import ProtectedRoute from './components/ProtectedRoute copy.jsx'
+
+import Dashboard from './pages/user/Dashboard.jsx'
+import AdminRoute from './components/AdminRoute.jsx'
+import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -17,6 +22,26 @@ const router = createBrowserRouter([
       { path: "/signup", element: <SignUp /> },
     ],
   },
+
+  // User pages
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    )
+  },
+
+  // Admin pages
+  {
+    path: "/admin-dashboard",
+    element: (
+      <AdminRoute>
+        <AdminDashboard />
+      </AdminRoute>
+    )
+  }
 ]);
 
 
