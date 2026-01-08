@@ -1,4 +1,63 @@
+import { useState } from "react";
+import { signUp } from "../api/signUpApi.js";
+
 const SignUp = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Email validation
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailError("");
+
+    // Password match check
+    if (password !== rePassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    // Call signUpApi
+    const result = await signUp(email, password);
+
+    if (result.success) {
+      alert("Account created successfully!");
+      console.log("User UID:", result.uid);
+
+      {/* Restart all the input in form */ }
+      setEmail("")
+      setPassword("")
+      setRePassword("")
+      setEmailError("")
+
+    } else {
+      alert("Signup failed: " + result.error);
+    }
+
+  };
+
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
       <div className="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg">
@@ -10,7 +69,7 @@ const SignUp = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
 
           {/* Email */}
           <div>
@@ -19,7 +78,15 @@ const SignUp = () => {
               type="email"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError("");
+              }}
             />
+            {emailError && (
+              <p className="text-red-500 text-sm mt-1">{emailError}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -29,6 +96,8 @@ const SignUp = () => {
               type="password"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
@@ -39,6 +108,8 @@ const SignUp = () => {
               type="password"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
               placeholder="Confirm your password"
+              value={rePassword}
+              onChange={(e) => setRePassword(e.target.value)}
             />
           </div>
 
