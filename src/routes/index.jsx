@@ -11,7 +11,7 @@ import UserLayout from "../layout/UserLayout.jsx";
 
 // admin pages
 import { adminConfig } from "./adminConfig.jsx";
-import Sidebar from "../layout/Sidebar";
+import AdminLayout from "../layout/AdminLayout";
 
 // protected routes
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -47,7 +47,7 @@ const routes = [
     path: page.path,
     element: (
       <AdminRoute>
-        <Sidebar />
+        <AdminLayout />
       </AdminRoute>
     ),
     children: [
