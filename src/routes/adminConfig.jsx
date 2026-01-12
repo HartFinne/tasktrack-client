@@ -5,7 +5,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 export const adminConfig = [
   {
     title: "Dashboard",
-    path: "/admin-dashboard",
+    path: "/admin/dashboard",
     component: AdminDashboard,
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4">

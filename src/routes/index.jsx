@@ -43,17 +43,32 @@ const routes = [
   })),
 
   // Admin pages
-  ...adminConfig.map((page) => ({
-    path: page.path,
+  // ...adminConfig.map((page) => ({
+  //   path: page.path,
+  //   element: (
+  //     <AdminRoute>
+  //       <AdminLayout />
+  //     </AdminRoute>
+  //   ),
+  //   children: [
+  //     { index: true, element: <page.component />, title: page.title },
+  //   ]
+  // })),
+
+
+  {
+    path: "/admin",
     element: (
       <AdminRoute>
         <AdminLayout />
       </AdminRoute>
     ),
-    children: [
-      { index: true, element: <page.component />, title: page.title },
-    ]
-  })),
+    children: adminConfig.map((page) => ({
+      path: page.path.replace("/admin/", ""), // nested path
+      element: <page.component />,
+      title: page.title,
+    })),
+  },
 
 ]
 
