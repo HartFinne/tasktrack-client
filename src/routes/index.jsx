@@ -6,14 +6,18 @@ import Login from "../pages/auth/Login";
 import SignUp from "../pages/auth/SignUp";
 
 // user pages
-import Dashboard from "../pages/user/Dashboard";
+import { userConfig } from "./userConfig.jsx";
+import UserLayout from "../layout/UserLayout.jsx";
 
 // admin pages
-import AdminDashboard from "../pages/admin/AdminDashboard";
+import { adminConfig } from "./adminConfig.jsx";
+import Sidebar from "../layout/Sidebar";
 
 // protected routes
 import ProtectedRoute from "../components/ProtectedRoute";
 import AdminRoute from "../components/AdminRoute";
+
+
 
 const routes = [
   {
@@ -26,24 +30,31 @@ const routes = [
   },
 
   // User pages
-  {
-    path: "/dashboard",
+  ...userConfig.map((page) => ({
+    path: page.path, // top-level path
     element: (
       <ProtectedRoute>
-        <Dashboard />
+        <UserLayout />
       </ProtectedRoute>
-    )
-  },
+    ),
+    children: [
+      { index: true, element: <page.component />, title: page.title },
+    ],
+  })),
 
   // Admin pages
-  {
-    path: "/admin-dashboard",
+  ...adminConfig.map((page) => ({
+    path: page.path,
     element: (
       <AdminRoute>
-        <AdminDashboard />
+        <Sidebar />
       </AdminRoute>
-    )
-  }
+    ),
+    children: [
+      { index: true, element: <page.component />, title: page.title },
+    ]
+  })),
+
 ]
 
 export const router = createBrowserRouter(routes)
