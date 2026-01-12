@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 import { login } from "../../api/loginApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { Navigate } from "react-router-dom";
+
+import { redirectByRole } from "../../utils/redirect.jsx";
 
 import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
@@ -18,13 +20,13 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("")
   const [error, setError] = useState("");
 
+  const navigate = useNavigate
+
   if (loading) return <p>Loading...</p>;
 
   // Redirect based on role
-  if (user) {
-    if (user.role === "employee") return <Navigate to="/dashboard" replace />;
-    if (user.role === "admin") return <Navigate to="/admin-dashboard" replace />;
-  }
+  const roleRedirect = redirectByRole(user);
+  if (roleRedirect) return roleRedirect;
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
@@ -49,6 +51,9 @@ const Login = () => {
     alert("Account login successfully!");
     setEmail("");
     setPassword("");
+
+    if (result.role === "employee") navigate("/dashboard", { replace: true });
+    if (result.role === "admin") navigate("/admin-dashboard", { replace: true });
   };
 
   return (

@@ -10,7 +10,9 @@ import { router } from './routes/index.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
+
       <RouterProvider router={router} />
+
     </AuthProvider>
   </StrictMode>,
 )

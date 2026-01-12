@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { redirectByRole } from "../../utils/redirect.jsx";
 import { signUp } from "../../api/signUpApi.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
@@ -8,6 +11,8 @@ import FormButton from "../../components/auth/FormButton.jsx";
 
 
 const SignUp = () => {
+  const { user, loading } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
@@ -17,19 +22,22 @@ const SignUp = () => {
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+  const navigate = useNavigate(); // <-- add this
+
+  // Redirect based on role
+  if (loading) return <p>Loading...</p>;
+  const roleRedirect = redirectByRole(user);
+  if (roleRedirect) return roleRedirect;
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email) return setEmailError("Email is required");
     if (!validateEmail(email)) return setEmailError("Please enter a valid email address");
 
-    setEmailError("");
-
     if (!password) return setPasswordError("Password is required")
     if (!rePassword) return setRePasswordError("Re-Password is required")
-
-    setPasswordError("")
-    setRePasswordError("")
 
     if (password !== rePassword) {
       // alert("Passwords do not match");
@@ -48,6 +56,10 @@ const SignUp = () => {
       setPassword("");
       setRePassword("");
       setEmailError("");
+      setPasswordError("")
+      setRePasswordError("")
+
+      navigate("/", { replace: true });
 
     } else {
       alert("Signup failed: " + result.error);
