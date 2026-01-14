@@ -1,7 +1,6 @@
-
-export async function fetchTasks(token) {
+export async function fetchTasks(token, page = 1, limit = 5) {
   try {
-    const res = await fetch("http://localhost:8080/tasks", {
+    const res = await fetch(`http://localhost:8080/tasks?limit=${limit}&page=${page}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -13,7 +12,7 @@ export async function fetchTasks(token) {
 
     return await res.json();
   } catch (error) {
-    console.error("fetchUsers error:", error.message);
+    console.error("fetchTasks error:", error.message);
     return null;
   }
 }

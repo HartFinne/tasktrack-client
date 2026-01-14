@@ -6,23 +6,29 @@ import { useQuery } from "@tanstack/react-query";
 import UsersList from "../../components/admin/UsersList";
 import TasksList from "../../components/admin/TasksList";
 import CreateTaskModal from "../../components/admin/CreateTaskModal";
+import Pagination from "../../components/admin/Pagination";
+import { useState } from "react";
 
 const AdminDashboard = () => {
   const { user, loading } = useAuth();
+  const [taskPage, setTaskPage] = useState(1);
+  const [userPage, setUserPage] = useState(1);
+  const limit = 5;
+
 
   console.log(user.token)
 
   // fetch the users data using react query
   const { data: allUsers = [], isPending: isUsersLoading, isError: isUsersError, error: usersError } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => fetchUsers(user.token),
+    queryKey: ["users", userPage],
+    queryFn: () => fetchUsers(user.token, userPage, limit),
     enabled: !loading && !!user?.token,
   });
 
   // fetch the tasks data using react query
   const { data: allTasks = [], isPending: isTasksLoading, isError: isTasksError, error: tasksError } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => fetchTasks(user.token),
+    queryKey: ["tasks", taskPage],
+    queryFn: () => fetchTasks(user.token, taskPage, limit),
     enabled: !loading && !!user?.token,
   });
 
@@ -35,8 +41,24 @@ const AdminDashboard = () => {
         Create Task
       </button>
 
-      <UsersList users={allUsers} isLoading={isUsersLoading} isError={isUsersError} error={usersError} />
-      <TasksList tasks={allTasks} isLoading={isTasksLoading} isError={isTasksError} error={tasksError} />
+      <UsersList users={allUsers} isLoading={isUsersLoading} isError={isUsersError} error={usersError} page={userPage}
+        limit={limit} />
+
+      <Pagination
+        page={userPage}
+        setPage={setUserPage}
+        hasNext={allUsers.length === limit}
+      />
+
+      <TasksList tasks={allTasks} isLoading={isTasksLoading} isError={isTasksError} error={tasksError} page={taskPage}
+        limit={limit} />
+
+      <Pagination
+        page={taskPage}
+        setPage={setTaskPage}
+        hasNext={allTasks.length === limit}
+      />
+
       <CreateTaskModal />
     </div>
   );

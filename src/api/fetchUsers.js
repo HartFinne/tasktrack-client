@@ -1,7 +1,7 @@
 
-export async function fetchUsers(token) {
+export async function fetchUsers(token, page = 1, limit = 5) {
   try {
-    const res = await fetch("http://localhost:8080/users/users", {
+    const res = await fetch(`http://localhost:8080/users/users?limit=${limit}&page=${page}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }

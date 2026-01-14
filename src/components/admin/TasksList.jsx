@@ -1,5 +1,5 @@
 
-const TasksList = ({ tasks, isLoading, isError, error }) => {
+const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
   console.log(tasks)
   return (
     <div className="mt-6">
@@ -64,7 +64,7 @@ const TasksList = ({ tasks, isLoading, isError, error }) => {
               !isError &&
               tasks.map((task, index) => (
                 <tr key={task.uid} className="text-center hover:bg-base-300">
-                  <td>{index + 1}</td>
+                  <td>{(page - 1) * limit + index + 1}</td>
                   <td>{task.title}</td>
                   <td>{task.description}</td>
                   <td>{task.status}</td>

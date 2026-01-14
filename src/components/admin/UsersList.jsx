@@ -1,4 +1,4 @@
-const UsersList = ({ users, isLoading, isError, error }) => {
+const UsersList = ({ users, isLoading, isError, error, page, limit }) => {
   return (
     <div className="mt-6">
       <h2 className="text-xl font-bold mb-3">Users</h2>
@@ -53,7 +53,7 @@ const UsersList = ({ users, isLoading, isError, error }) => {
               !isError &&
               users.map((user, index) => (
                 <tr key={user.uid} className="text-center hover:bg-base-300">
-                  <td>{index + 1}</td>
+                  <td>{(page - 1) * limit + index + 1}</td>
                   <td>{user.email}</td>
                   <td>
                     <span className="badge badge-info">{user.role}</span>
