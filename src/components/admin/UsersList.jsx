@@ -1,4 +1,4 @@
-const UsersList = ({ users, isLoading, isError, error, page, limit }) => {
+const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
   return (
     <div className="mt-6">
       <h2 className="text-xl font-bold mb-3">Users</h2>
