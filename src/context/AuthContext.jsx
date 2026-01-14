@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 // 10-second expiration for testing
-const LOGIN_EXPIRATION_SECONDS = 10;
+const LOGIN_EXPIRATION_SECONDS = 3600;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -41,7 +41,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("loginTime", now);
 
       const fullProfile = await fetchUserProfile(firebaseUser);
-      setUser(fullProfile);
+      const token = await firebaseUser.getIdToken();
+      setUser({
+        ...fullProfile,
+        token, // ⬅ include token here!
+      });
       setLoading(false);
 
       // Setup auto logout countdown
