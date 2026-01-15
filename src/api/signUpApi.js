@@ -1,37 +1,60 @@
-
 import { auth } from "../config/firebase.js";
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseErrorMessages } from "../utils/firebaseErrorMessages.js";
 
 export async function signUp(email, password) {
   try {
-    // 1️ Create user in Firebase Auth
+    // 1) Create user in Firebase
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    console.log("Firebase Auth user created:", userCredential.user.uid);
-
-    // 2️ Get ID token
     const token = await userCredential.user.getIdToken();
-    console.log("ID Token generated:", token);
 
-    // 3️ Call backend /users/register
+    // 2) Send token to backend
     const res = await fetch("http://localhost:8080/users/register", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({}), // backend doesn't need email/password
+      body: JSON.stringify({}),
     });
 
     const data = await res.json();
     console.log("Backend response:", data);
-    return { success: true, uid: userCredential.user.uid };
+
+    return {
+      success: true,
+      uid: userCredential.user.uid,
+    };
+
   } catch (error) {
-    console.log("error message: ", error.message)
+    console.log("Raw error:", error.message);
+
+    // Handle Firebase password requirement errors
     if (error.message.includes("auth/password-does-not-meet-requirements")) {
-      return { success: false, error: error.message };
-    } else {
-      return { success: false, error: firebaseErrorMessages[error.code] }
+
+      // Extract requirement list between [ ... ]
+      const matches = error.message.match(/\[(.*)\]/);
+
+      let formattedMessage = "Your password must meet the following requirements:\n";
+
+      if (matches && matches[1]) {
+        const requirements = matches[1]
+          .split(",")
+          .map(r => "- " + r.trim()) // bullet list
+          .join("\n");
+
+        formattedMessage += requirements;
+      } else {
+        formattedMessage += "- Unknown password requirement error";
+      }
+
+      return { success: false, error: formattedMessage };
     }
+
+    // Default Firebase error mapping
+    return {
+      success: false,
+      error: firebaseErrorMessages[error.code] || "An unexpected error occurred",
+    };
   }
 }

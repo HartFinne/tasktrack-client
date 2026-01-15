@@ -9,10 +9,11 @@ import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
+import Loading from "../../components/Loading.jsx";
 
 
 const SignUp = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,12 +25,14 @@ const SignUp = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const navigate = useNavigate();
 
   // Redirect based on role
-  if (loading) return <p>Loading...</p>;
+  if (authLoading) return <Loading fullScreen message="Loading..." />;
   const roleRedirect = redirectByRole(user);
   if (roleRedirect) return roleRedirect;
 
@@ -54,43 +57,32 @@ const SignUp = () => {
       return;
     }
 
-    const result = await signUp(email, password);
+    // ✅ Start loading BEFORE the async request
+    setIsLoading(true);
 
-    if (result.success) {
-      setSuccess("Registered Successfully")
+    try {
+      const result = await signUp(email, password);
+
+      if (!result.success) {
+        setError(result.error);
+        setIsLoading(false);
+        return;
+      }
+
+      setSuccess("Registered Successfully");
 
       // Reset form
       setEmail("");
       setPassword("");
       setRePassword("");
-      setEmailError("");
-      setPasswordError("")
-      setRePasswordError("")
 
       navigate("/", { replace: true });
 
-    } else {
-      let message = result.error;
-
-      console.log(message)
-
-      // Check if it's a password requirements error
-      if (result.error.includes("auth/password-does-not-meet-requirements")) {
-        // Extract the list from brackets
-        const matches = result.error.match(/\[(.*)\]/);
-        if (matches && matches[1]) {
-          // Split by comma and trim spaces
-          const requirements = matches[1].split(",").map(r => r.trim());
-          message = "Your password must meet the following requirements:\n" + requirements.join("\n");
-        }
-
-        setRePasswordError(message);
-      }
-
-      if (!result.error.includes("auth/password-does-not-meet-requirements")) {
-        setError(message);
-      }
-
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      // ✅ Stop loading after request finishes
+      setIsLoading(false);
     }
   };
 
@@ -148,7 +140,7 @@ const SignUp = () => {
           />
 
           {/* Register Button */}
-          <FormButton label="Register" />
+          <FormButton label="Register" isLoading={isLoading} />
         </form>
 
         {/* Switch to Sign In */}

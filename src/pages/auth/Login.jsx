@@ -24,7 +24,7 @@ const Login = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
 
@@ -55,22 +55,22 @@ const Login = () => {
     }
 
     setError(""); // clear errors
-    setLoading(result.success)
+    setIsLoading(result.success)
 
     setEmail("");
     setPassword("");
 
     if (result.role === "employee") {
-      setLoading(false);
+      setIsLoading(false);
       navigate("/dashboard", { replace: true })
     };
     if (result.role === "admin") {
-      setLoading(false);
+      setIsLoading(false);
       navigate("/admin-dashboard", { replace: true })
     };
   };
 
-  if (loading) return <Loading fullScreen message="Logging you in..." />;
+  if (isLoading) return <Loading fullScreen message="Logging you in..." />;
 
 
   return (

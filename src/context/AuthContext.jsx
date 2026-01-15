@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 // 10-second expiration for testing
-const LOGIN_EXPIRATION_SECONDS = 10;
+const LOGIN_EXPIRATION_SECONDS = 1000;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
