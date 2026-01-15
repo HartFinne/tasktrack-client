@@ -1,7 +1,7 @@
 
 import { auth } from "../config/firebase.js";
-import {createUserWithEmailAndPassword} from "firebase/auth"
-
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { firebaseErrorMessages } from "../utils/firebaseErrorMessages.js";
 
 export async function signUp(email, password) {
   try {
@@ -26,8 +26,12 @@ export async function signUp(email, password) {
     const data = await res.json();
     console.log("Backend response:", data);
     return { success: true, uid: userCredential.user.uid };
-  } catch (err) {
-    console.error("Error:", err.message);
-    return { success: false, error: err.message };
+  } catch (error) {
+    console.log("error message: ", error.message)
+    if (error.message.includes("auth/password-does-not-meet-requirements")) {
+      return { success: false, error: error.message };
+    } else {
+      return { success: false, error: firebaseErrorMessages[error.code] }
+    }
   }
 }

@@ -2,7 +2,7 @@ const FormInput = ({ label, type, value, onChange, error, placeholder }) => {
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text text-lg">{label}</span>
+        <span className="label-text">{label}</span>
       </label>
 
       <input
@@ -10,12 +10,14 @@ const FormInput = ({ label, type, value, onChange, error, placeholder }) => {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="input input-bordered w-full text-lg"
+        className="input input-bordered w-full"
       />
 
       {error && (
-        <div className="alert alert-error mt-2 py-2 text-sm">
-          {error}
+        <div className="text-red-600 mt-1 py-0 text-sm">
+          {error.split("\n").map((line, i) => (
+            <span key={i} className="block">{line}</span>
+          ))}
         </div>
       )}
 

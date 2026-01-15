@@ -10,6 +10,7 @@ import { redirectByRole } from "../../utils/redirect.jsx";
 import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
+import Toast from "../../components/Toast.jsx";
 
 const Login = () => {
   const { user, loading } = useAuth();
@@ -18,9 +19,11 @@ const Login = () => {
 
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
+
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate
+  const navigate = useNavigate();
 
   if (loading) return <p>Loading...</p>;
 
@@ -44,11 +47,13 @@ const Login = () => {
     const result = await login(email, password);
 
     if (!result.success) {
-      setError("Auth credential invalid " + result.error);
+      setError(result.error || "Login credentials invalid");
       return;
     }
 
-    alert("Account login successfully!");
+    setSuccess("Successfully logged in!");
+    setError(""); // clear errors
+
     setEmail("");
     setPassword("");
 
@@ -57,54 +62,56 @@ const Login = () => {
   };
 
   return (
-    <Card
-      title="TaskTrack"
-      subtitle="Sign in to your account"
-    >
-      {/* Form */}
-      <form className="space-y-4" onSubmit={handleLogin}>
+    <div>
+      <Toast
+        type={error ? "error" : "success"}
+        message={error || success}
+        duration={3000}
+        onClose={() => { setError(""); setSuccess(""); }}
+      />
+      <Card
+        title="TaskTrack"
+        subtitle="Sign in to your account"
+      >
+        {/* Form */}
+        <form className="space-y-4" onSubmit={handleLogin}>
 
-        {/* Email */}
-        <FormInput
-          label="Email"
-          type="email"
-          value={email}
-          placeholder="Enter your email"
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-          error={emailError}
-        />
+          {/* Email */}
+          <FormInput
+            label="Email"
+            type="email"
+            value={email}
+            placeholder="Enter your email"
+            onChange={(e) => {
+              setEmail(e.target.value)
+            }}
+            error={emailError}
+          />
 
-        {/* Password */}
-        <FormInput
-          label="Password"
-          type="password"
-          value={password}
-          placeholder="Enter your password"
-          onChange={(e) => setPassword(e.target.value)}
-          error={passwordError}
-        />
+          {/* Password */}
+          <FormInput
+            label="Password"
+            type="password"
+            value={password}
+            placeholder="Enter your password"
+            onChange={(e) => setPassword(e.target.value)}
+            error={passwordError}
+          />
 
-        {/* Error Alert */}
-        {error && (
-          <div className="alert alert-error text-sm">
-            <span>{error}</span>
-          </div>
-        )}
+          {/* Sign In Button */}
+          <FormButton label="Sign In" />
+        </form>
 
-        {/* Sign In Button */}
-        <FormButton label="Sign In" />
-      </form>
+        {/* Register Link */}
+        <p className="text-center text-sm mt-6">
+          Don’t have an account?
+          <Link to="/signup" className="text-primary hover:underline ml-1">
+            Sign up
+          </Link>
+        </p>
+      </Card>
+    </div>
 
-      {/* Register Link */}
-      <p className="text-center text-sm mt-6">
-        Don’t have an account?
-        <Link to="/signup" className="text-primary hover:underline ml-1">
-          Sign up
-        </Link>
-      </p>
-    </Card>
   );
 };
 
