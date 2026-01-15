@@ -39,6 +39,9 @@ export const firebaseErrorMessages = {
   "auth/invalid-provider-id": "Invalid login provider.",
   "auth/invalid-oauth-responsetype": "Invalid OAuth configuration.",
 
+  // Login
+  "auth/invalid-credential": "Invalid Email or Password",
+
   // Catch-all for unexpected errors
   "default": "Something went wrong. Please try again."
 };

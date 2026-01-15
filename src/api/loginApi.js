@@ -1,5 +1,6 @@
-import {auth} from "../config/firebase.js"
+import { auth } from "../config/firebase.js"
 import { signInWithEmailAndPassword } from "firebase/auth"
+import { firebaseErrorMessages } from "../utils/firebaseErrorMessages.js";
 
 export async function login(email, password) {
   try {
@@ -11,6 +12,7 @@ export async function login(email, password) {
 
     return { success: true, uid: userCredential.user.uid };
   } catch (err) {
-    return { success: false, error: err.message };
+    const friendlyMessage = firebaseErrorMessages[err.code] || firebaseErrorMessages["default"];
+    return { success: false, error: friendlyMessage };
   }
 }
