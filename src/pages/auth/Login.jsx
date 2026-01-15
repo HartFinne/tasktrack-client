@@ -11,9 +11,10 @@ import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
+import Loading from "../../components/Loading.jsx";
 
 const Login = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,9 +24,11 @@ const Login = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate();
 
-  if (loading) return <p>Loading...</p>;
+  if (authLoading) return <Loading fullScreen message="Loading..." />;
 
   // Redirect based on role
   const roleRedirect = redirectByRole(user);
@@ -51,15 +54,24 @@ const Login = () => {
       return;
     }
 
-    setSuccess("Successfully logged in!");
     setError(""); // clear errors
+    setLoading(result.success)
 
     setEmail("");
     setPassword("");
 
-    if (result.role === "employee") navigate("/dashboard", { replace: true });
-    if (result.role === "admin") navigate("/admin-dashboard", { replace: true });
+    if (result.role === "employee") {
+      setLoading(false);
+      navigate("/dashboard", { replace: true })
+    };
+    if (result.role === "admin") {
+      setLoading(false);
+      navigate("/admin-dashboard", { replace: true })
+    };
   };
+
+  if (loading) return <Loading fullScreen message="Logging you in..." />;
+
 
   return (
     <div>
