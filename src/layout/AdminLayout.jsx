@@ -1,14 +1,17 @@
+import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
+
 import { adminConfig } from "../routes/adminConfig";
+import Loading from "../components/Loading.jsx"; // import spinner
 
 const Sidebar = () => {
   const location = useLocation();
+
 
   // Find the current page by matching location
   const currentPage = adminConfig.find(
     (page) => page.path === location.pathname
   );
-
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
