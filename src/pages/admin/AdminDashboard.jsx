@@ -78,7 +78,7 @@ const AdminDashboard = () => {
         onPrev={taskPrevPage}
         hasNext={!!tasksData.lastUid}
         hasPrev={taskHasPrev}
-        page={userPage}
+        page={taskPage}
       />
     </div>
   );

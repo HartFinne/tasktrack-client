@@ -1,108 +1,104 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
-import { redirectByRole } from "../../utils/redirect.jsx";
 import { signUp } from "../../api/signUpApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
+import RedirectByRole from "../../components/RedirectByRole.jsx";
 import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
 import Loading from "../../components/Loading.jsx";
 
-
 const SignUp = () => {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
 
+  // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
+
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("")
-  const [rePasswordError, setRePasswordError] = useState("")
+  const [passwordError, setPasswordError] = useState("");
+  const [rePasswordError, setRePasswordError] = useState("");
 
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  const [isLoading, setIsLoading] = useState(false)
+  const [toastType, setToastType] = useState(null);
+  const [toastMessage, setToastMessage] = useState("");
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-  const navigate = useNavigate();
+  // React Query mutation
+  const signUpMutation = useMutation({
+    mutationFn: ({ email, password }) => signUp(email, password),
 
-  // Redirect based on role
-  if (authLoading) return <Loading fullScreen message="Loading..." />;
-  const roleRedirect = redirectByRole(user);
-  if (roleRedirect) return roleRedirect;
+    onSuccess: () => {
+      setToastType("success");
+      setToastMessage("Registered Successfully!");
 
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setEmailError("");
-    setPasswordError("")
-    setRePasswordError("")
-
-    if (!email) return setEmailError("Email is required");
-    if (!validateEmail(email)) return setEmailError("Please enter a valid email address");
-
-    if (!password) return setPasswordError("Password is required")
-    if (!rePassword) return setRePasswordError("Re-Password is required")
-
-    if (password !== rePassword) {
-      // alert("Passwords do not match");
-      setPasswordError("Password do not match")
-      setRePasswordError("Password do not match")
-      return;
-    }
-
-    // ✅ Start loading BEFORE the async request
-    setIsLoading(true);
-
-    try {
-      const result = await signUp(email, password);
-
-      if (!result.success) {
-        setError(result.error);
-        setIsLoading(false);
-        return;
-      }
-
-      setSuccess("Registered Successfully");
-
-      // Reset form
+      // Clear form
       setEmail("");
       setPassword("");
       setRePassword("");
 
-      navigate("/", { replace: true });
+      // Redirect to login
+      setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 2000);
+    },
 
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      // ✅ Stop loading after request finishes
-      setIsLoading(false);
+    onError: (err) => {
+      setToastType("error");
+      setToastMessage(err.message || "Something went wrong");
     }
+  });
+
+  // Redirect if authenticated
+  if (authLoading) return <Loading fullScreen message="Loading..." />;
+  if (user && user.role) return <RedirectByRole />;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+    setRePasswordError("");
+
+    // Validation
+    if (!email) return setEmailError("Email is required");
+    if (!validateEmail(email)) return setEmailError("Invalid email");
+
+    if (!password) return setPasswordError("Password is required");
+    if (!rePassword) return setRePasswordError("Re-password is required");
+
+    if (password !== rePassword) {
+      setPasswordError("Passwords do not match");
+      setRePasswordError("Passwords do not match");
+      return;
+    }
+
+    // Trigger signup request
+    signUpMutation.mutate({ email, password });
   };
 
   return (
     <div>
       <Toast
-        type={error ? "error" : "success"}
-        message={error || success}
+        type={toastType}
+        message={toastMessage}
         duration={3000}
-        onClose={() => { setError(""); setSuccess(""); }}
+        onClose={() => {
+          setToastMessage("");
+          setToastType(null);
+        }}
       />
 
-      <Card
-        title="Create an Account"
-        subtitle="Sign up to get started with TaskTrack"
-      >
-        {/* Form */}
+      <Card title="Create an Account" subtitle="Sign up to get started with TaskTrack">
         <form className="space-y-4" onSubmit={handleSubmit}>
 
-          {/* Email */}
           <FormInput
             label="Email"
             type="email"
@@ -113,23 +109,22 @@ const SignUp = () => {
               setEmailError("");
             }}
             error={emailError}
+            disabled={signUpMutation.isPending}
           />
 
-          {/* Password */}
           <FormInput
             label="Password"
             type="password"
             value={password}
             placeholder="Enter your password"
             onChange={(e) => {
-              setPassword(e.target.value)
-              setPasswordError("")
+              setPassword(e.target.value);
+              setPasswordError("");
             }}
             error={passwordError}
+            disabled={signUpMutation.isPending}
           />
 
-
-          {/* Re-type Password */}
           <FormInput
             label="Re-type Password"
             type="password"
@@ -137,13 +132,12 @@ const SignUp = () => {
             placeholder="Confirm your password"
             onChange={(e) => setRePassword(e.target.value)}
             error={rePasswordError}
+            disabled={signUpMutation.isPending}
           />
 
-          {/* Register Button */}
-          <FormButton label="Register" isLoading={isLoading} />
+          <FormButton label="Register" isLoading={signUpMutation.isPending} />
         </form>
 
-        {/* Switch to Sign In */}
         <p className="text-center text-sm mt-4">
           Already have an account?
           <Link to="/" className="text-primary hover:underline ml-1">
@@ -151,9 +145,7 @@ const SignUp = () => {
           </Link>
         </p>
       </Card>
-
     </div>
-
   );
 };
 

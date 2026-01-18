@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 import { login } from "../../api/loginApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
-
-import { redirectByRole } from "../../utils/redirect.jsx";
+import RedirectByRole from "../../components/RedirectByRole.jsx";
 
 import FormInput from "../../components/auth/FormInput.jsx";
 import Card from "../../components/auth/Card.jsx";
@@ -15,92 +14,77 @@ import Loading from "../../components/Loading.jsx";
 
 const Login = () => {
   const { user, loading: authLoading } = useAuth();
+
+  // Local state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [toastType, setToastType] = useState(null); // "success" | "error"
+  const [toastMessage, setToastMessage] = useState("");
 
-  const [emailError, setEmailError] = useState("")
-  const [passwordError, setPasswordError] = useState("")
+  // React Query mutation
+  const loginMutation = useMutation({
+    mutationFn: ({ email, password }) => login(email, password),
+    onSuccess: () => {
+      setToastType("success");
+      setToastMessage("Logged in successfully!");
+      setLoading(true)
+    },
+    onError: (err) => {
+      setToastType("error");
+      setToastMessage(err.message || "Something went wrong");
+    }
+  });
 
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+  if (authLoading) {
+    return <Loading fullScreen message={"Loading..."} />;
+  }
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  const navigate = useNavigate();
-
-  if (authLoading) return <Loading fullScreen message="Loading..." />;
-
-  // Redirect based on role
-  const roleRedirect = redirectByRole(user);
-  if (roleRedirect) return roleRedirect;
+  // Auto-redirect when user is already logged in
+  if (user && user.role) {
+    return <RedirectByRole />;
+  }
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setError("");
+
+    setEmailError("");
+    setPasswordError("");
 
     if (!email) return setEmailError("Email is required");
-    if (!validateEmail(email)) return setEmailError("Please enter a valid email address");
+    if (!validateEmail(email)) return setEmailError("Invalid email");
+
     if (!password) return setPasswordError("Password is required");
 
-    setEmailError("")
-    setPasswordError("")
-
-    const result = await login(email, password);
-
-    if (!result.success) {
-      setError(result.error || "Login credentials invalid");
-      return;
-    }
-
-    setError(""); // clear errors
-    setIsLoading(result.success)
-
-    setEmail("");
-    setPassword("");
-
-    if (result.role === "employee") {
-      setIsLoading(false);
-      navigate("/dashboard", { replace: true })
-    };
-    if (result.role === "admin") {
-      setIsLoading(false);
-      navigate("/admin-dashboard", { replace: true })
-    };
+    // Trigger react-query mutation
+    loginMutation.mutate({ email, password });
   };
-
-  if (isLoading) return <Loading fullScreen message="Logging you in..." />;
-
 
   return (
     <div>
       <Toast
-        type={error ? "error" : "success"}
-        message={error || success}
+        type={toastType}
+        message={toastMessage}
         duration={3000}
-        onClose={() => { setError(""); setSuccess(""); }}
+        onClose={() => setToastMessage("")}
       />
-      <Card
-        title="TaskTrack"
-        subtitle="Sign in to your account"
-      >
-        {/* Form */}
+
+      <Card title="TaskTrack" subtitle="Sign in to your account">
         <form className="space-y-4" onSubmit={handleLogin}>
 
-          {/* Email */}
           <FormInput
             label="Email"
             type="email"
             value={email}
             placeholder="Enter your email"
-            onChange={(e) => {
-              setEmail(e.target.value)
-            }}
+            onChange={(e) => setEmail(e.target.value)}
             error={emailError}
+            disabled={loginMutation.isPending}
           />
 
-          {/* Password */}
           <FormInput
             label="Password"
             type="password"
@@ -108,22 +92,20 @@ const Login = () => {
             placeholder="Enter your password"
             onChange={(e) => setPassword(e.target.value)}
             error={passwordError}
+            disabled={loginMutation.isPending}
           />
 
-          {/* Sign In Button */}
-          <FormButton label="Sign In" />
+          <FormButton label="Sign In" isLoading={loginMutation.isPending} />
         </form>
 
-        {/* Register Link */}
         <p className="text-center text-sm mt-6">
           Don’t have an account?
-          <Link to="/signup" className="text-primary hover:underline ml-1">
+          <Link to="/signup" className="text-primary hover:underline ml-1" disabled={loginMutation.isPending}>
             Sign up
           </Link>
         </p>
       </Card>
     </div>
-
   );
 };
 

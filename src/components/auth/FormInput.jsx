@@ -1,4 +1,4 @@
-const FormInput = ({ label, type, value, onChange, error, placeholder }) => {
+const FormInput = ({ label, type, value, onChange, placeholder, error, disabled }) => {
   return (
     <div className="form-control">
       <label className="label">
@@ -11,6 +11,7 @@ const FormInput = ({ label, type, value, onChange, error, placeholder }) => {
         onChange={onChange}
         placeholder={placeholder}
         className="input input-bordered w-full"
+        disabled={disabled}
       />
 
       {error && (

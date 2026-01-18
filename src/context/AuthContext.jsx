@@ -4,16 +4,14 @@ import { auth } from "../config/firebase";
 import { fetchUserProfile } from "../api/userProfileApi.js";
 
 const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+const useAuth = () => useContext(AuthContext);
 
-// 10-second expiration for testing
-const LOGIN_EXPIRATION_SECONDS = 1000;
+const LOGIN_EXPIRATION_SECONDS = 10;
 
-export const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Track auto logout timer
   useEffect(() => {
     let logoutTimeout;
 
@@ -25,10 +23,9 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      const now = new Date().getTime();
+      const now = Date.now();
       const loginTime = localStorage.getItem("loginTime");
 
-      // Check if session expired
       if (loginTime && now - loginTime > LOGIN_EXPIRATION_SECONDS * 1000) {
         await signOut(auth);
         setUser(null);
@@ -37,19 +34,17 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Session valid → update login timestamp
       localStorage.setItem("loginTime", now);
 
       const fullProfile = await fetchUserProfile(firebaseUser);
       const token = await firebaseUser.getIdToken();
-      setUser({
-        ...fullProfile,
-        token, // ⬅ include token here!
-      });
+
+      setUser({ ...fullProfile, token });
       setLoading(false);
 
-      // Setup auto logout countdown
-      const remaining = LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
+      const remaining =
+        LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
+
       logoutTimeout = setTimeout(async () => {
         await signOut(auth);
         setUser(null);
@@ -59,7 +54,7 @@ export const AuthProvider = ({ children }) => {
 
     return () => {
       unsubscribe();
-      if (logoutTimeout) clearTimeout(logoutTimeout);
+      logoutTimeout && clearTimeout(logoutTimeout);
     };
   }, []);
 
@@ -68,4 +63,6 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export { AuthProvider, useAuth };

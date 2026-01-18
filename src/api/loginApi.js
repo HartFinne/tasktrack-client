@@ -1,18 +1,16 @@
-import { auth } from "../config/firebase.js"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { firebaseErrorMessages } from "../utils/firebaseErrorMessages.js";
+import { auth } from "../config/firebase.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export async function login(email, password) {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    console.log("Logged in: ", userCredential.user)
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-    const token = await userCredential.user.getIdToken()
-    console.log("Token: ", token)
+  console.log("Logged in: ", userCredential.user);
 
-    return { success: true, uid: userCredential.user.uid };
-  } catch (err) {
-    const friendlyMessage = firebaseErrorMessages[err.code] || firebaseErrorMessages["default"];
-    return { success: false, error: friendlyMessage };
-  }
+  // Get token
+  const token = await userCredential.user.getIdToken();
+  console.log(token)
+  return {
+    uid: userCredential.user.uid,
+  };
+
 }
