@@ -6,7 +6,7 @@ import { fetchUserProfile } from "../api/userProfileApi.js";
 const AuthContext = createContext();
 const useAuth = () => useContext(AuthContext);
 
-const LOGIN_EXPIRATION_SECONDS = 10;
+const LOGIN_EXPIRATION_SECONDS = 60;
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

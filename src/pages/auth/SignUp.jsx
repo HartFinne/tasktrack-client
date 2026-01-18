@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import { signUp } from "../../api/signUpApi.js";
+import { signUp } from "../../api/authApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import RedirectByRole from "../../components/RedirectByRole.jsx";

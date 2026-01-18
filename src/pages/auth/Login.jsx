@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import { login } from "../../api/loginApi.js";
+import { login } from "../../api/authApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import RedirectByRole from "../../components/RedirectByRole.jsx";
 
@@ -29,7 +29,6 @@ const Login = () => {
     onSuccess: () => {
       setToastType("success");
       setToastMessage("Logged in successfully!");
-      setLoading(true)
     },
     onError: (err) => {
       setToastType("error");
