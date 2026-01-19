@@ -1,9 +1,42 @@
+import Pagination from "../../components/admin/Pagination";
+import { useCursorPagination } from "../../hooks/useCursorPagination";
+import { fetchTasks } from "../../api/fetchTasks";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAuth } from "../../context/AuthContext";
 
-const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
-  console.log(tasks)
+const TasksList = ({ limit }) => {
+  const { user } = useAuth();
+
+  // Task pagination
+  const {
+    lastUid: lastTaskUid,
+    page: taskPage,
+    hasPrev: taskHasPrev,
+    nextPage: taskNextPage,
+    prevPage: taskPrevPage,
+  } = useCursorPagination(limit);
+
+  // fetch the tasks data using react query
+  const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useSuspenseQuery({
+    queryKey: ["tasks", lastTaskUid],
+    queryFn: () => fetchTasks(user.token, limit, lastTaskUid),
+    enabled: !!user?.token,
+  });
+
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold">Tasks</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Tasks</h2>
+
+
+        <Pagination
+          onNext={() => taskNextPage(tasksData.lastUid)}
+          onPrev={taskPrevPage}
+          hasNext={!!tasksData.lastUid}
+          hasPrev={taskHasPrev}
+          page={taskPage}
+        />
+      </div>
 
       <div className="overflow-x-auto">
         <table className="table w-full">
@@ -19,7 +52,7 @@ const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
 
           <tbody>
             {/* Loading Skeleton */}
-            {isLoading &&
+            {/* {isPending &&
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="text-center">
                   <td>
@@ -38,7 +71,7 @@ const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
                     <div className="skeleton h-4 w-24 mx-auto"></div>
                   </td>
                 </tr>
-              ))}
+              ))} */}
 
 
             {/* Error */}
@@ -51,7 +84,7 @@ const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
             )}
 
             {/* Empty state */}
-            {!isLoading && !isError && tasks.length === 0 && (
+            {!isPending && !isError && tasksData.tasks.length === 0 && (
               <tr>
                 <td colSpan={3} className="text-center text-gray-500">
                   No tasks found.
@@ -60,11 +93,11 @@ const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
             )}
 
             {/* Actual data */}
-            {!isLoading &&
+            {!isPending &&
               !isError &&
-              tasks.map((task, index) => (
+              tasksData.tasks.map((task, index) => (
                 <tr key={task.uid} className="text-center hover:bg-base-300">
-                  <td>{(page - 1) * limit + index + 1}</td>
+                  <td>{(taskPage - 1) * limit + index + 1}</td>
                   <td>{task.title}</td>
                   <td>{task.description}</td>
                   <td>{task.status}</td>
@@ -74,7 +107,7 @@ const TasksList = ({ tasks, isLoading, isError, error, page, limit }) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </div >
   )
 }
 

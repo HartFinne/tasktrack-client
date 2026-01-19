@@ -1,7 +1,42 @@
-const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
+import Pagination from "../../components/admin/Pagination";
+import { useCursorPagination } from "../../hooks/useCursorPagination";
+import { fetchUsers } from "../../api/fetchUsers";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAuth } from "../../context/AuthContext";
+
+const UsersList = ({ limit }) => {
+  const { user } = useAuth();
+
+  // User pagination
+  const {
+    lastUid: lastUserUid,
+    page: userPage,
+    hasPrev: userHasPrev,
+    nextPage: userNextPage,
+    prevPage: userPrevPage,
+  } = useCursorPagination(limit);
+
+  // fetch the users data using react query
+  const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useSuspenseQuery({
+    queryKey: ["users", lastUserUid],
+    queryFn: () => fetchUsers(user.token, limit, lastUserUid),
+    enabled: !!user?.token,
+  });
+
+
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-3">Users</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Users</h2>
+
+        <Pagination
+          onNext={() => userNextPage(usersData.lastUid)}
+          onPrev={userPrevPage}
+          hasNext={!!usersData.lastUid}
+          hasPrev={userHasPrev}
+          page={userPage}
+        />
+      </div>
 
       <div className="overflow-x-auto">
         <table className="table w-full">
@@ -15,7 +50,7 @@ const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
 
           <tbody>
             {/* Loading Skeleton */}
-            {isLoading &&
+            {/* {isPending &&
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="text-center">
                   <td>
@@ -28,7 +63,7 @@ const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
                     <div className="skeleton h-4 w-24 mx-auto"></div>
                   </td>
                 </tr>
-              ))}
+              ))} */}
 
             {/* Error */}
             {isError && (
@@ -40,7 +75,7 @@ const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
             )}
 
             {/* Empty state */}
-            {!isLoading && !isError && users.length === 0 && (
+            {!isPending && !isError && usersData.users.length === 0 && (
               <tr>
                 <td colSpan={3} className="text-center text-gray-500">
                   No users found.
@@ -49,11 +84,11 @@ const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
             )}
 
             {/* Actual data */}
-            {!isLoading &&
+            {!isPending &&
               !isError &&
-              users.map((user, index) => (
+              usersData.users.map((user, index) => (
                 <tr key={user.uid} className="text-center hover:bg-base-300">
-                  <td>{(page - 1) * limit + index + 1}</td>
+                  <td>{(userPage - 1) * limit + index + 1}</td>
                   <td>{user.email}</td>
                   <td>
                     <span className="badge badge-info">{user.role}</span>
@@ -63,6 +98,7 @@ const UsersList = ({ users, isLoading, isError, error, limit, page }) => {
           </tbody>
         </table>
       </div>
+
     </div>
   );
 };
