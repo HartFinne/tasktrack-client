@@ -19,15 +19,10 @@ const AdminDashboard = () => {
 
       <CreateTaskModal />
 
-      {/* Separate Suspense for Users */}
-      <Suspense fallback={<Loading message="Loading users..." />}>
-        <UsersList limit={limit} />
-      </Suspense>
+      <UsersList limit={limit} />
 
-      {/* Separate Suspense for Tasks */}
-      <Suspense fallback={<Loading message="Loading tasks..." />}>
-        <TasksList limit={limit} />
-      </Suspense>
+      <TasksList limit={limit} />
+
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import Pagination from "../../components/admin/Pagination";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchUsers } from "../../api/fetchUsers";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 
 const UsersList = ({ limit }) => {
@@ -17,7 +17,7 @@ const UsersList = ({ limit }) => {
   } = useCursorPagination(limit);
 
   // fetch the users data using react query
-  const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useSuspenseQuery({
+  const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useQuery({
     queryKey: ["users", lastUserUid],
     queryFn: () => fetchUsers(user.token, limit, lastUserUid),
     enabled: !!user?.token,
@@ -50,7 +50,7 @@ const UsersList = ({ limit }) => {
 
           <tbody>
             {/* Loading Skeleton */}
-            {/* {isPending &&
+            {isPending &&
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="text-center">
                   <td>
@@ -63,7 +63,7 @@ const UsersList = ({ limit }) => {
                     <div className="skeleton h-4 w-24 mx-auto"></div>
                   </td>
                 </tr>
-              ))} */}
+              ))}
 
             {/* Error */}
             {isError && (
