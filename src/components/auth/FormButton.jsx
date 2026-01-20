@@ -1,7 +1,7 @@
-const FormButton = ({ label }) => {
+const FormButton = ({ label, isLoading }) => {
   return (
-    <button className="btn btn-primary w-full text-lg">
-      {label}
+    <button disabled={isLoading} className="btn btn-primary w-full text-lg">
+      {isLoading ? <span className="loading loading-spinner text-primary"></span> : label}
     </button>
   )
 }

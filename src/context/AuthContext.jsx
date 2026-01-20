@@ -4,20 +4,31 @@ import { auth } from "../config/firebase";
 import { fetchUserProfile } from "../api/userProfileApi.js";
 
 const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+const useAuth = () => useContext(AuthContext);
 
-// 10-second expiration for testing
-const LOGIN_EXPIRATION_SECONDS = 10;
+const LOGIN_EXPIRATION_SECONDS = 1000;
 
-export const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Track auto logout timer
+  // Function to log out manually
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      localStorage.removeItem("loginTime");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   useEffect(() => {
     let logoutTimeout;
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
+
       if (!firebaseUser) {
         setUser(null);
         localStorage.removeItem("loginTime");
@@ -25,43 +36,47 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      const now = new Date().getTime();
+      const now = Date.now();
       const loginTime = localStorage.getItem("loginTime");
 
-      // Check if session expired
       if (loginTime && now - loginTime > LOGIN_EXPIRATION_SECONDS * 1000) {
-        await signOut(auth);
-        setUser(null);
-        localStorage.removeItem("loginTime");
+        await logout(); // session expired
         setLoading(false);
         return;
       }
 
-      // Session valid → update login timestamp
       localStorage.setItem("loginTime", now);
 
-      const fullProfile = await fetchUserProfile(firebaseUser);
-      setUser(fullProfile);
-      setLoading(false);
-
-      // Setup auto logout countdown
-      const remaining = LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
-      logoutTimeout = setTimeout(async () => {
-        await signOut(auth);
+      try {
+        const fullProfile = await fetchUserProfile(firebaseUser);
+        const token = await firebaseUser.getIdToken();
+        setUser({ ...fullProfile, token });
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
         setUser(null);
-        localStorage.removeItem("loginTime");
+      } finally {
+        setLoading(false);
+      }
+
+      const remaining =
+        LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
+
+      logoutTimeout = setTimeout(() => {
+        logout();
       }, remaining);
     });
 
     return () => {
       unsubscribe();
-      if (logoutTimeout) clearTimeout(logoutTimeout);
+      logoutTimeout && clearTimeout(logoutTimeout);
     };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export { AuthProvider, useAuth };
