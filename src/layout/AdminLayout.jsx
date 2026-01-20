@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 import { adminConfig } from "../routes/adminConfig";
-import Loading from "../components/Loading.jsx"; // import spinner
 
 const Sidebar = () => {
   const location = useLocation();
+  const { logout } = useAuth();
+
+
 
 
   // Find the current page by matching location
@@ -37,7 +39,17 @@ const Sidebar = () => {
       <div className="drawer-side is-drawer-close:overflow-visible">
         <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
         <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+
           <ul className="menu w-full grow">
+            <li className>
+              <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right " data-tip={"TaskTrack"}>
+                <p className="my-1.5 inline-block size-5 font-bold ml-0.5">TT</p>
+                <span className="is-drawer-close:hidden">TaskTrack</span>
+              </span>
+            </li>
+
+            <span className="divider my-0.5 mr-1"></span>
+
             {adminConfig.map((page) => (
               <li key={page.path}>
                 <Link
@@ -50,10 +62,19 @@ const Sidebar = () => {
                 </Link>
               </li>
             ))}
+            <li className="mb-2">
+              <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right hover:bg-red-500 hover:text-white transition-colors duration-200" data-tip={"Logout"} onClick={logout}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4 ml-0.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                </svg>
+
+                <span className="is-drawer-close:hidden">Logout</span>
+              </span>
+            </li>
           </ul>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

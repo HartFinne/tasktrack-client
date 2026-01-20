@@ -6,23 +6,33 @@ import { fetchUserProfile } from "../api/userProfileApi.js";
 const AuthContext = createContext();
 const useAuth = () => useContext(AuthContext);
 
-const LOGIN_EXPIRATION_SECONDS = 60;
+const LOGIN_EXPIRATION_SECONDS = 1000;
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Function to log out manually
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      localStorage.removeItem("loginTime");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   useEffect(() => {
     let logoutTimeout;
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      // Start loading whenever auth state changes
       setLoading(true);
 
       if (!firebaseUser) {
         setUser(null);
         localStorage.removeItem("loginTime");
-        setLoading(false); // no user, done loading
+        setLoading(false);
         return;
       }
 
@@ -30,10 +40,7 @@ function AuthProvider({ children }) {
       const loginTime = localStorage.getItem("loginTime");
 
       if (loginTime && now - loginTime > LOGIN_EXPIRATION_SECONDS * 1000) {
-        // session expired
-        await signOut(auth);
-        setUser(null);
-        localStorage.removeItem("loginTime");
+        await logout(); // session expired
         setLoading(false);
         return;
       }
@@ -41,25 +48,21 @@ function AuthProvider({ children }) {
       localStorage.setItem("loginTime", now);
 
       try {
-        // Fetch full profile & token
         const fullProfile = await fetchUserProfile(firebaseUser);
         const token = await firebaseUser.getIdToken();
-
         setUser({ ...fullProfile, token });
       } catch (err) {
         console.error("Failed to fetch user profile", err);
         setUser(null);
       } finally {
-        setLoading(false); // done fetching user
+        setLoading(false);
       }
 
       const remaining =
         LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
 
-      logoutTimeout = setTimeout(async () => {
-        await signOut(auth);
-        setUser(null);
-        localStorage.removeItem("loginTime");
+      logoutTimeout = setTimeout(() => {
+        logout();
       }, remaining);
     });
 
@@ -70,7 +73,7 @@ function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
