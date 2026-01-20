@@ -3,10 +3,9 @@ import TasksList from "../../components/admin/TasksList";
 import CreateTaskModal from "../../components/admin/CreateTaskModal";
 import Loading from "../../components/Loading";
 
-import { Suspense } from "react";
 
 const AdminDashboard = () => {
-  const limit = 10;
+  const limit = 15;
 
   return (
     <div className="p-6">

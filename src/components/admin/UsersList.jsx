@@ -14,12 +14,13 @@ const UsersList = ({ limit }) => {
     hasPrev: userHasPrev,
     nextPage: userNextPage,
     prevPage: userPrevPage,
-  } = useCursorPagination(limit);
+  } = useCursorPagination();
 
   // fetch the users data using react query
   const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useQuery({
     queryKey: ["users", lastUserUid],
     queryFn: () => fetchUsers(user.token, limit, lastUserUid),
+    staleTime: Infinity,
     enabled: !!user?.token,
   });
 

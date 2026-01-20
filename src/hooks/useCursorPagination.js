@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function useCursorPagination(limit = 5) {
+export function useCursorPagination() {
   const [lastUid, setLastUid] = useState(null);
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);

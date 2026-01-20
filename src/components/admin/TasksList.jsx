@@ -14,12 +14,13 @@ const TasksList = ({ limit }) => {
     hasPrev: taskHasPrev,
     nextPage: taskNextPage,
     prevPage: taskPrevPage,
-  } = useCursorPagination(limit);
+  } = useCursorPagination();
 
   // fetch the tasks data using react query
   const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
     queryKey: ["tasks", lastTaskUid],
     queryFn: () => fetchTasks(user.token, limit, lastTaskUid),
+    staleTime: Infinity,
     enabled: !!user?.token,
   });
 
