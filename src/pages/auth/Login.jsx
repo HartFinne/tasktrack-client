@@ -23,8 +23,6 @@ const Login = () => {
   const [toastType, setToastType] = useState(null); // "success" | "error"
   const [toastMessage, setToastMessage] = useState("");
 
-  const [loading, setLoading] = useState(false)
-
   // React Query mutation
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => login(email, password),
