@@ -23,12 +23,15 @@ const Login = () => {
   const [toastType, setToastType] = useState(null); // "success" | "error"
   const [toastMessage, setToastMessage] = useState("");
 
+  const [loading, setLoading] = useState(false)
+
   // React Query mutation
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => login(email, password),
     onSuccess: () => {
       setToastType("success");
       setToastMessage("Logged in successfully!");
+
     },
     onError: (err) => {
       setToastType("error");
@@ -63,7 +66,20 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div
+      className="min-h-screen flex items-center justify-center px-4
+        bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10
+        dark:from-primary/20 dark:via-base-300 dark:to-secondary/20
+        relative overflow-hidden"
+    >
+      {/* Soft glow behind card */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-105 h-[420px] rounded-full
+          bg-gradient-to-br from-primary/20 to-secondary/20
+          blur-3xl opacity-60">
+        </div>
+      </div>
+
       <Toast
         type={toastType}
         message={toastMessage}
@@ -71,39 +87,76 @@ const Login = () => {
         onClose={() => setToastMessage("")}
       />
 
-      <Card title="TaskTrack" subtitle="Sign in to your account">
-        <form className="space-y-4" onSubmit={handleLogin}>
+      {/* Card */}
+      <div
+        className="
+          relative z-10 w-full max-w-md
+          bg-base-100/75 dark:bg-base-100/75
+          backdrop-blur-xl
+          rounded-2xl
+          border border-base-300/60 dark:border-base-200/40
+          shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)]
+        "
+      >
+        <div className="p-8">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold
+              bg-gradient-to-r from-primary to-secondary
+              bg-clip-text text-transparent">
+              TaskTrack
+            </h1>
+            <p className="text-sm text-base-content/60 mt-1">
+              Sign in to your account
+            </p>
+          </div>
 
-          <FormInput
-            label="Email"
-            type="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={(e) => setEmail(e.target.value)}
-            error={emailError}
-            disabled={loginMutation.isPending}
-          />
+          {/* Form */}
+          <form className="space-y-4" onSubmit={handleLogin}>
+            <FormInput
+              label="Email"
+              type="email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
+              error={emailError}
+              disabled={loginMutation.isPending}
+            />
 
-          <FormInput
-            label="Password"
-            type="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={(e) => setPassword(e.target.value)}
-            error={passwordError}
-            disabled={loginMutation.isPending}
-          />
+            <FormInput
+              label="Password"
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
+              error={passwordError}
+              disabled={loginMutation.isPending}
+            />
 
-          <FormButton label="Sign In" isLoading={loginMutation.isPending} />
-        </form>
+            <FormButton
+              label="Sign In"
+              isLoading={loginMutation.isPending}
+              className="btn btn-primary w-full"
+            />
+          </form>
 
-        <p className="text-center text-sm mt-6">
-          Don’t have an account?
-          <Link to="/signup" className="text-primary hover:underline ml-1" disabled={loginMutation.isPending}>
-            Sign up
-          </Link>
-        </p>
-      </Card>
+          {/* Footer */}
+          <div className="divider my-6">OR</div>
+
+          <p className="text-center text-sm">
+            Don’t have an account?
+            <Link
+              to="/signup"
+              className={`ml-1 link link-primary ${loginMutation.isPending
+                ? "pointer-events-none opacity-50"
+                : ""
+                }`}
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -85,7 +85,20 @@ const SignUp = () => {
   };
 
   return (
-    <div>
+    <div
+      className="min-h-screen flex items-center justify-center px-4
+        bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10
+        dark:from-primary/20 dark:via-base-300 dark:to-secondary/20
+        relative overflow-hidden"
+    >
+      {/* Soft glow behind card */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[420px] h-[420px] rounded-full
+          bg-gradient-to-br from-primary/20 to-secondary/20
+          blur-3xl opacity-60">
+        </div>
+      </div>
+
       <Toast
         type={toastType}
         message={toastMessage}
@@ -96,55 +109,80 @@ const SignUp = () => {
         }}
       />
 
-      <Card title="Create an Account" subtitle="Sign up to get started with TaskTrack">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Card */}
+      <div
+        className="
+          relative z-10 w-full max-w-md
+          bg-base-100/75 backdrop-blur-xl
+          rounded-2xl
+          border border-base-300/60
+          shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)]
+        "
+      >
+        <div className="card-body p-8">
+          <h2 className="text-2xl font-bold text-center bg-linear-to-r from-primary to-secondary
+              bg-clip-text text-transparent">Create an Account</h2>
+          <p className="text-sm text-center text-base-content/70 mb-4">
+            Sign up to get started with TaskTrack
+          </p>
 
-          <FormInput
-            label="Email"
-            type="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailError("");
-            }}
-            error={emailError}
-            disabled={signUpMutation.isPending}
-          />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <FormInput
+              label="Email"
+              type="email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError("");
+              }}
+              error={emailError}
+              disabled={signUpMutation.isPending}
+            />
 
-          <FormInput
-            label="Password"
-            type="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setPasswordError("");
-            }}
-            error={passwordError}
-            disabled={signUpMutation.isPending}
-          />
+            <FormInput
+              label="Password"
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError("");
+              }}
+              error={passwordError}
+              disabled={signUpMutation.isPending}
+            />
 
-          <FormInput
-            label="Re-type Password"
-            type="password"
-            value={rePassword}
-            placeholder="Confirm your password"
-            onChange={(e) => setRePassword(e.target.value)}
-            error={rePasswordError}
-            disabled={signUpMutation.isPending}
-          />
+            <FormInput
+              label="Re-type Password"
+              type="password"
+              value={rePassword}
+              placeholder="Confirm your password"
+              onChange={(e) => {
+                setRePassword(e.target.value);
+                setRePasswordError("");
+              }}
+              error={rePasswordError}
+              disabled={signUpMutation.isPending}
+            />
 
-          <FormButton label="Register" isLoading={signUpMutation.isPending} />
-        </form>
+            <FormButton
+              label="Create Account"
+              isLoading={signUpMutation.isPending}
+            />
+          </form>
 
-        <p className="text-center text-sm mt-4">
-          Already have an account?
-          <Link to="/" className="text-primary hover:underline ml-1">
-            Sign in here
-          </Link>
-        </p>
-      </Card>
+          {/* Footer */}
+          <div className="divider my-6">OR</div>
+
+          <p className="text-center text-sm ">
+            Already have an account?
+            <Link to="/" className="text-primary hover:underline ml-1">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

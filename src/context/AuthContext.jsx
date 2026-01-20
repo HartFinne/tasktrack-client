@@ -16,10 +16,13 @@ function AuthProvider({ children }) {
     let logoutTimeout;
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Start loading whenever auth state changes
+      setLoading(true);
+
       if (!firebaseUser) {
         setUser(null);
         localStorage.removeItem("loginTime");
-        setLoading(false);
+        setLoading(false); // no user, done loading
         return;
       }
 
@@ -27,6 +30,7 @@ function AuthProvider({ children }) {
       const loginTime = localStorage.getItem("loginTime");
 
       if (loginTime && now - loginTime > LOGIN_EXPIRATION_SECONDS * 1000) {
+        // session expired
         await signOut(auth);
         setUser(null);
         localStorage.removeItem("loginTime");
@@ -36,11 +40,18 @@ function AuthProvider({ children }) {
 
       localStorage.setItem("loginTime", now);
 
-      const fullProfile = await fetchUserProfile(firebaseUser);
-      const token = await firebaseUser.getIdToken();
+      try {
+        // Fetch full profile & token
+        const fullProfile = await fetchUserProfile(firebaseUser);
+        const token = await firebaseUser.getIdToken();
 
-      setUser({ ...fullProfile, token });
-      setLoading(false);
+        setUser({ ...fullProfile, token });
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+        setUser(null);
+      } finally {
+        setLoading(false); // done fetching user
+      }
 
       const remaining =
         LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
