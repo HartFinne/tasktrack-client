@@ -2,22 +2,26 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 import { fetchUserTasks } from "../../api/taskApi";
 import formatCreatedAt from "../../utils/formatCreatedAt"
+import UpdateTaskModal from "./UpdateTaskModal";
+import { useState } from "react";
 
 const UserTasksList = () => {
   const { user } = useAuth();
+  const [selectedTask, setSelectedTask] = useState(null)
 
-  const { data, isPending, isError, error } = useSuspenseQuery({
-    queryKey: ["tasks"],
+  const { data, isError, error } = useSuspenseQuery({
+    queryKey: ["userTasks"],
     queryFn: () => fetchUserTasks(user.token),
     enabled: !!user?.token,
   })
 
-  if (isPending) return <p>Loading tasks...</p>;
   if (isError) return <p>Error: {error.message}</p>;
-
 
   return (
     <>
+      <UpdateTaskModal task={selectedTask} />
+
+
       {data.tasks.length === 0 && (
         <div className="alert alert-info">
           <span>No tasks assigned to you.</span>
@@ -33,7 +37,7 @@ const UserTasksList = () => {
                 <span
                   className={`badge ${task.status === "backlog"
                     ? "badge-secondary"
-                    : task.status === "in-progress"
+                    : task.status === "in_progress"
                       ? "badge-warning"
                       : "badge-success"
                     }`}
@@ -50,7 +54,15 @@ const UserTasksList = () => {
                 <span className="text-xs opacity-60">
                   Created at: {formatCreatedAt(task.createdAt)}
                 </span>
-                <button className="btn btn-sm btn-primary">
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => {
+                    setSelectedTask(task);
+                    document
+                      .getElementById("updateStatusModal")
+                      .showModal();
+                  }}
+                >
                   Update Status
                 </button>
               </div>

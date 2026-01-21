@@ -1,8 +1,6 @@
 import UsersList from "../../components/admin/UsersList";
 import TasksList from "../../components/admin/TasksList";
 import CreateTaskModal from "../../components/admin/CreateTaskModal";
-import Loading from "../../components/Loading";
-
 
 const AdminDashboard = () => {
   const limit = 15;

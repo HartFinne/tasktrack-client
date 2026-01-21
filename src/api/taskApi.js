@@ -23,6 +23,7 @@ export async function createTask(token, taskData) {
 
 
 // to get the assign tasks to user
+//TODO: add limit and pagination
 export async function fetchUserTasks(token) {
   const res = await fetch(`${developmentUrl}tasks/my`, {
     headers: { "Authorization": `Bearer ${token}` }
@@ -31,4 +32,24 @@ export async function fetchUserTasks(token) {
   if (!res.ok) throw new Error("Failed to fetch tasks");
   const data = await res.json();
   return data;
+}
+
+
+//
+export async function updateTaskStatus(token, uid, taskStatus) {
+
+  const res = await fetch(`${developmentUrl}tasks/${uid}/status`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(taskStatus),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create task");
+  }
+
+  return await res.json(); // return updated task
 }
