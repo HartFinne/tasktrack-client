@@ -48,8 +48,29 @@ export async function updateTaskStatus(token, uid, taskStatus) {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to create task");
+    throw new Error("Failed to update task");
   }
 
   return await res.json(); // return updated task
+}
+
+// router.put("/tasks/:taskId/assign", authMiddleware, adminMiddleware, taskController.assignTask)
+export async function updateTaskAssignedTo(token, taskId, taskData) {
+  console.log(taskId)
+
+  console.log("task Data: ", taskData)
+  const res = await fetch(`${developmentUrl}tasks/${taskId}/assign`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(taskData)
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to update task")
+  }
+
+  return await res.json()
 }

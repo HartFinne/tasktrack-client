@@ -10,7 +10,7 @@ const UserTasksList = () => {
   const [selectedTask, setSelectedTask] = useState(null)
 
   const { data, isError, error } = useSuspenseQuery({
-    queryKey: ["userTasks"],
+    queryKey: ["tasks"],
     queryFn: () => fetchUserTasks(user.token),
     enabled: !!user?.token,
   })

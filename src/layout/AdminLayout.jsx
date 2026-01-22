@@ -7,9 +7,6 @@ const Sidebar = () => {
   const location = useLocation();
   const { logout } = useAuth();
 
-
-
-
   // Find the current page by matching location
   const currentPage = adminConfig.find(
     (page) => page.path === location.pathname

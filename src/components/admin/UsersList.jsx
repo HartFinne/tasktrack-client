@@ -13,7 +13,7 @@ const UsersList = ({ limit }) => {
   const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useQuery({
     queryKey: ["users", lastUid],
     queryFn: () => fetchUsers(user.token, limit, lastUid),
-    staleTime: Infinity,
+    staleTime: 60 * 1000,
     enabled: !!user?.token,
   });
 

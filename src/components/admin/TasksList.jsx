@@ -3,9 +3,12 @@ import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchTasks } from "../../api/fetchTasks";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
+import UpdateAssignModal from "./UpdateAssignModal";
+import { useState } from "react";
 
 const TasksList = ({ limit }) => {
   const { user } = useAuth();
+  const [selectedTask, setSelectedTask] = useState(null)
 
   const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
 
@@ -18,6 +21,9 @@ const TasksList = ({ limit }) => {
 
   return (
     <div className="mt-6">
+
+      <UpdateAssignModal task={selectedTask} />
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">Tasks</h2>
 
@@ -39,9 +45,10 @@ const TasksList = ({ limit }) => {
               <th>Description</th>
               <th>Status</th>
               <th>Assigned To</th>
+              <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y">
             {isPending && Array.from({ length: 5 }).map((_, i) => (
               <tr key={i} className="text-center">
                 <td><div className="skeleton h-4 w-6 mx-auto"></div></td>
@@ -68,13 +75,29 @@ const TasksList = ({ limit }) => {
               </tr>
             )}
 
-            {!isPending && !isError && tasksData.tasks.map((taskItem, index) => (
-              <tr key={taskItem.uid} className="text-center hover:bg-base-300">
+            {!isPending && !isError && tasksData.tasks.map((task, index) => (
+              <tr key={task.uid} className="text-center hover:bg-base-300">
                 <td>{(page - 1) * limit + index + 1}</td>
-                <td>{taskItem.title}</td>
-                <td>{taskItem.description}</td>
-                <td>{taskItem.status}</td>
-                <td>{taskItem.assignedTo}</td>
+                <td>{task.title}</td>
+                <td>{task.description}</td>
+                <td>
+                  <span className={`badge ${task.status === "backlog" ? "badge-secondary" :
+                    task.status === "in_progress" ? "badge-warning" :
+                      "badge-success"} font-semibold`}>
+                    {task.status.toUpperCase()}
+                  </span>
+                </td>
+                <td>
+                  {task.assignedEmail}
+                </td>
+                <td>
+                  <button className="btn btn-primary btn-xs" onClick={() => {
+                    setSelectedTask(task)
+                    document.getElementById("updateAssignModal").showModal()
+                  }}>
+                    Assign
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
