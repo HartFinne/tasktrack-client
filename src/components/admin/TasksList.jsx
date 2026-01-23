@@ -20,7 +20,7 @@ const TasksList = ({ limit }) => {
   });
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 min-h-150">
 
       <UpdateAssignModal task={selectedTask} />
 
