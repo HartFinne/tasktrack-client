@@ -52,10 +52,12 @@ const UsersList = ({ limit }) => {
         Array.from({ length: limit }).map((_, i) => (
           <div
             key={i}
-            className="p-3 rounded-lg border border-base-300 bg-base-200 animate-pulse"
+            className="p-3 rounded-lg border border-base-300 bg-base-100 animate-pulse min-h-16"
           >
-            <div className="h-5 w-32 bg-base-300 rounded mb-2"></div>
-            <div className="h-4 w-16 bg-base-300 rounded"></div>
+            <div className="flex items-center justify-around ">
+              <div className="h-5 w-32 bg-base-300 rounded mb-2"></div>
+              <div className="h-4 w-16 bg-base-300 rounded"></div>
+            </div>
           </div>
         ))}
 
@@ -80,7 +82,7 @@ const UsersList = ({ limit }) => {
 
             <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
               <p className="font-medium text-base-content">{userItem.email}</p>
-              <span className="badge badge-outline">{userItem.role}</span>
+              <span className="badge badge-soft badge-secondary">{userItem.role}</span>
             </div>
           </div>
         ))}

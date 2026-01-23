@@ -20,7 +20,7 @@ const TasksList = ({ limit }) => {
   });
 
   const getStatusBadge = (status) => {
-    if (status === "backlog") return "badge badge-secondary";
+    if (status === "backlog") return "badge badge-info";
     if (status === "in_progress") return "badge badge-warning";
     if (status === "done") return "badge badge-success";
     return "badge badge-outline";
@@ -66,9 +66,19 @@ const TasksList = ({ limit }) => {
             key={i}
             className="p-3 rounded-lg border border-base-300 animate-pulse bg-base-200"
           >
-            <div className="h-4 w-32 bg-base-300 rounded mb-2"></div>
-            <div className="h-3 w-48 bg-base-300 rounded mb-3"></div>
-            <div className="h-5 w-20 bg-base-300 rounded"></div>
+
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
+              <div className="h-4 w-32 bg-base-300 rounded mb-2"></div>
+              <div className="h-4 w-20 bg-base-300 rounded mb-2"></div>
+            </div>
+            <div className="h-3 w-150 bg-base-300 rounded mb-3"></div>
+            <div className="h-3 w-150 bg-base-300 rounded mb-3"></div>
+            <div className="h-3 w-150 bg-base-300 rounded mb-3"></div>
+
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
+              <div className="h-6 w-30 bg-base-300 rounded mt-3"></div>
+              <div className="h-8 w-10 bg-base-300 rounded mt-3"></div>
+            </div>
           </div>
         ))}
 
@@ -88,25 +98,28 @@ const TasksList = ({ limit }) => {
         tasksData.tasks.map((task) => (
           <div
             key={task.uid}
-            className="p-3 rounded-lg border border-base-300 hover:bg-base-300 transition-colors bg-base-100"
+            className="p-3 rounded-lg border border-base-300 hover:bg-base-300 transition-colors bg-base-100 flex flex-col md:flex-col gap-2"
           >
-            <div className="flex items-center gap-2 flex-wrap mb-3">
-              <p className="font-medium text-base-content">{task.title}</p>
-              <span className={getStatusBadge(task.status)}>
+            {/* Top row: Title + Status */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
+              <p className="font-medium text-base-content break-words">{task.title}</p>
+              <span className={`${getStatusBadge(task.status)} font-semibold`}>
                 {task.status.toUpperCase()}
               </span>
             </div>
 
-            <p className="text-sm text-base-content/70 mb-2 line-clamp-3">
+            {/* Description */}
+            <p className="text-sm text-base-content/70 mb-2 line-clamp-3 break-words">
               {task.description}
             </p>
 
-            <div className="flex items-center justify-between gap-2 flex-wrap mt-3">
-              <span className="badge badge-outline">
+            {/* Bottom row: Assigned Email + Edit button */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
+              <span className="badge badge-soft badge-secondary">
                 {task.assignedEmail || "Unassigned"}
               </span>
               <button
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm w-full md:w-auto"
                 onClick={() => {
                   setSelectedTask(task);
                   document.getElementById("updateAssignModal").showModal();

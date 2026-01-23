@@ -24,8 +24,8 @@ const AdminDashboard = () => {
 
       <CreateTaskModal />
 
-      {/* Users and Tasks side by side */}
-      <div className="flex flex-row gap-4">
+      {/* Users and Tasks side by side (responsive) */}
+      <div className="flex flex-col lg:flex-row gap-4">
 
         {/* Users Card */}
         <div className="flex-1 card bg-base-200 shadow">
