@@ -1,5 +1,6 @@
 export async function fetchUsers(token, limit, lastUid = null) {
-  let url = `http://localhost:8080/users/users?limit=${limit}`;
+  let url = `http://localhost:8080/users/users`;
+  if (limit) url += `?limit=${limit}`
   if (lastUid) url += `&lastUid=${lastUid}`;
 
   const res = await fetch(url, {

@@ -20,8 +20,10 @@ export async function createTask(token, taskData) {
 }
 
 // to get all the tasks in admin
-export async function fetchTasks(token, limit, lastUid = null) {
-  let url = `http://localhost:8080/tasks?limit=${limit}`
+export async function fetchTasks(token, limit = null, lastUid = null) {
+  let url = `${developmentUrl}tasks`
+
+  if (limit) url += `?limit=${limit}`
   if (lastUid) url += `&lastUid=${lastUid}`
 
   const res = await fetch(url, {
