@@ -13,6 +13,7 @@ export default function ProtectedRoute({ children }) {
 
   // If not logged in, redirect to login
   if (!user) return <Navigate to="/" replace />;
+  if (user.role !== "employee") return <Navigate to="/unauthorized" replace />; // not admin
 
   // If logged in, render children
   return children;
