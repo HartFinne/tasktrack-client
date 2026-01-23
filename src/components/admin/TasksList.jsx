@@ -19,13 +19,36 @@ const TasksList = ({ limit }) => {
     enabled: !!user?.token,
   });
 
-  return (
-    <div className="mt-6 min-h-[70vh]">
+  const getStatusBadge = (status) => {
+    if (status === "backlog") return "badge badge-secondary";
+    if (status === "in_progress") return "badge badge-warning";
+    if (status === "done") return "badge badge-success";
+    return "badge badge-outline";
+  };
 
+  return (
+    <div className="mt-2 space-y-4 w-full text-base-content">
       <UpdateAssignModal task={selectedTask} />
 
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">Tasks</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xl font-bold mb-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="h-5 w-5 text-primary"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"
+            />
+          </svg>
+          Tasks
+        </div>
 
         <Pagination
           onNext={() => nextPage(tasksData.lastUid)}
@@ -36,76 +59,64 @@ const TasksList = ({ limit }) => {
         />
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr className="text-center">
-              <th>#</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Assigned To</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isPending && Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="text-center">
-                <td><div className="skeleton h-4 w-6 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-40 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-24 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-40 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-24 mx-auto"></div></td>
-              </tr>
-            ))}
+      {/* Skeleton loader */}
+      {isPending &&
+        Array.from({ length: limit }).map((_, i) => (
+          <div
+            key={i}
+            className="p-3 rounded-lg border border-base-300 animate-pulse bg-base-200"
+          >
+            <div className="h-4 w-32 bg-base-300 rounded mb-2"></div>
+            <div className="h-3 w-48 bg-base-300 rounded mb-3"></div>
+            <div className="h-5 w-20 bg-base-300 rounded"></div>
+          </div>
+        ))}
 
-            {isError && (
-              <tr>
-                <td colSpan={5} className="text-center text-red-600">
-                  Error loading tasks: {error.message}
-                </td>
-              </tr>
-            )}
+      {/* Error */}
+      {isError && (
+        <div className="text-center text-error">Error loading tasks: {error.message}</div>
+      )}
 
-            {!isPending && !isError && tasksData.tasks.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center text-gray-500">
-                  No tasks found.
-                </td>
-              </tr>
-            )}
+      {/* No tasks */}
+      {!isPending && !isError && tasksData.tasks.length === 0 && (
+        <div className="text-center text-base-content/70">No tasks found.</div>
+      )}
 
-            {!isPending && !isError && tasksData.tasks.map((task, index) => (
-              <tr key={task.uid} className="text-center hover:bg-base-300">
-                <td>{(page - 1) * limit + index + 1}</td>
-                <td>{task.title}</td>
-                <td>{task.description}</td>
-                <td>
-                  <span className={`badge ${task.status === "backlog" ? "badge-secondary" :
-                    task.status === "in_progress" ? "badge-warning" :
-                      "badge-success"} font-semibold`}>
-                    {task.status.toUpperCase()}
-                  </span>
-                </td>
-                <td>
-                  {task.assignedEmail}
-                </td>
-                <td>
-                  <button className="btn btn-primary btn-xs" onClick={() => {
-                    setSelectedTask(task)
-                    document.getElementById("updateAssignModal").showModal()
-                  }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                      <path fillRule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clipRule="evenodd" />
-                    </svg>
+      {/* Task list */}
+      {!isPending &&
+        !isError &&
+        tasksData.tasks.map((task) => (
+          <div
+            key={task.uid}
+            className="p-3 rounded-lg border border-base-300 hover:bg-base-300 transition-colors bg-base-100"
+          >
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <p className="font-medium text-base-content">{task.title}</p>
+              <span className={getStatusBadge(task.status)}>
+                {task.status.toUpperCase()}
+              </span>
+            </div>
 
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            <p className="text-sm text-base-content/70 mb-2 line-clamp-3">
+              {task.description}
+            </p>
+
+            <div className="flex items-center justify-between gap-2 flex-wrap mt-3">
+              <span className="badge badge-outline">
+                {task.assignedEmail || "Unassigned"}
+              </span>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => {
+                  setSelectedTask(task);
+                  document.getElementById("updateAssignModal").showModal();
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        ))}
     </div>
   );
 };

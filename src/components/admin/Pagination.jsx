@@ -1,7 +1,7 @@
 // components/admin/Pagination.jsx
 const Pagination = ({ onNext, onPrev, hasNext, hasPrev, page }) => {
   return (
-    <div className="btn-group mt-4">
+    <div className="btn-group ">
       <button className="btn btn-sm btn-accent" onClick={onPrev} disabled={!hasPrev}>
         « Prev
       </button>
