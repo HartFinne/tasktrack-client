@@ -45,7 +45,7 @@ const UserTasksList = () => {
 
       {/* Empty state (after loading) */}
       {!isPending && tasksData.tasks.length === 0 && (
-        <div className="alert alert-info">
+        <div className="flex items-center justify-center mt-20">
           <span>No tasks to load.</span>
         </div>
       )}

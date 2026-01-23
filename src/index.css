@@ -9,3 +9,7 @@
     dim,
     silk;
 }
+
+body {
+  @apply font-mono;
+}
