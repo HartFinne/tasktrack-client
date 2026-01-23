@@ -129,9 +129,9 @@ const UpdateAssignModal = ({ task }) => {
             <form key={task.uid} onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="label">
-                  <span className="label-text">Task</span>
+                  <span className="label-text">Currently Assigned To</span>
                 </label>
-                <p className="font-semibold">{task.title}</p>
+                <p className="font-semibold">{task.assignedEmail}</p>
               </div>
 
               <div>

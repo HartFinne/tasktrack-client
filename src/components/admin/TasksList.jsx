@@ -15,7 +15,7 @@ const TasksList = ({ limit }) => {
   const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
     queryKey: ["tasks", lastUid],
     queryFn: () => fetchTasks(user.token, limit, lastUid),
-    staleTime: Infinity,
+    staleTime: 60 * 1000,
     enabled: !!user?.token,
   });
 
