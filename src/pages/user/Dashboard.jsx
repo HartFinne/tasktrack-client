@@ -9,9 +9,7 @@ const Dashboard = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">My Tasks</h1>
 
-      <Suspense fallback={<TaskSkeleton />}>
-        <UserTasksList />
-      </Suspense>
+      <UserTasksList />
 
     </div >
   );

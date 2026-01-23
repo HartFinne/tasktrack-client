@@ -1,35 +1,54 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
+import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchUserTasks } from "../../api/taskApi";
 import formatCreatedAt from "../../utils/formatCreatedAt"
 import UpdateTaskModal from "./UpdateTaskModal";
+import Pagination from "../../components/admin/Pagination";
 import { useState } from "react";
+
+const limit = 50
 
 const UserTasksList = () => {
   const { user } = useAuth();
   const [selectedTask, setSelectedTask] = useState(null)
 
-  const { data, isError, error } = useSuspenseQuery({
-    queryKey: ["tasks"],
-    queryFn: () => fetchUserTasks(user.token),
+  const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
+
+  console.log(user.token)
+
+  const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
+    queryKey: ["tasks", lastUid],
+    queryFn: () => fetchUserTasks(user.token, limit, lastUid),
+    staleTime: 60 * 1000,
     enabled: !!user?.token,
-  })
+  });
 
   if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <>
+      <div className="flex items-center justify-end mb-6">
+        <Pagination
+          onNext={() => nextPage(tasksData.lastUid)}
+          onPrev={prevPage}
+          hasNext={!!tasksData.lastUid}
+          hasPrev={hasPrev}
+          page={page}
+        />
+
+      </div>
       <UpdateTaskModal task={selectedTask} />
 
 
-      {data.tasks.length === 0 && (
+      {tasksData.tasks.length === 0 && (
         <div className="alert alert-info">
-          <span>No tasks assigned to you.</span>
+          <span>No tasks to load.</span>
         </div>
       )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data.tasks.map((task) => (
+        {tasksData.tasks.map((task) => (
           <div key={task.uid} className="card bg-base-200 shadow-lg border border-base-300">
             <div className="card-body">
               <h2 className="card-title justify-between items-center">

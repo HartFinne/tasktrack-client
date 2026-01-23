@@ -20,12 +20,29 @@ export async function createTask(token, taskData) {
 }
 
 // to get all the tasks in admin
+export async function fetchTasks(token, limit, lastUid = null) {
+  let url = `http://localhost:8080/tasks?limit=${limit}`
+  if (lastUid) url += `&lastUid=${lastUid}`
+
+  const res = await fetch(url, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch tasks");
+
+  const data = await res.json();
+  return data;
+}
 
 
 // to get the assign tasks to user
 //TODO: add limit and pagination
-export async function fetchUserTasks(token) {
-  const res = await fetch(`${developmentUrl}tasks/my`, {
+export async function fetchUserTasks(token, limit, lastUid = null) {
+
+  let url = `${developmentUrl}tasks/my?limit=${limit}`
+  if (lastUid) url += `&lastUid=${lastUid}`
+  console.log("Limit:", url)
+  const res = await fetch(url, {
     headers: { "Authorization": `Bearer ${token}` }
   })
 
