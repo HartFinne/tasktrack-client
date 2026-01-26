@@ -1,7 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Loading from "./Loading";
-import { useEffect } from "react";
 
 export default function AdminRoute({ children }) {
   const { user, loading } = useAuth();

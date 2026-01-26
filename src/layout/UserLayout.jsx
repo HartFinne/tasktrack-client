@@ -1,8 +1,9 @@
-// src/layout/UserLayout.jsx
+import { useAuth } from "../context/AuthContext.jsx";
 import { Outlet, Link } from "react-router-dom";
 import { userConfig } from "../routes/userConfig";
 
 const UserLayout = () => {
+  const { logout } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -54,7 +55,7 @@ const UserLayout = () => {
         </div>
 
         <div className="navbar-end">
-          <a className="btn">Logout</a>
+          <a className="btn" onClick={logout}>Logout</a>
         </div>
       </div>
 
