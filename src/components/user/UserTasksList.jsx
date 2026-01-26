@@ -4,7 +4,7 @@ import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchUserTasks } from "../../api/taskApi";
 import formatCreatedAt from "../../utils/formatCreatedAt"
 import UpdateTaskModal from "./UpdateTaskModal";
-import Pagination from "../../components/admin/Pagination";
+import Pagination from "../Pagination";
 import TaskSkeleton from "../../components/user/TaskSkeleton"
 import { useState } from "react";
 
@@ -51,7 +51,7 @@ const UserTasksList = () => {
       )}
 
       {!isPending && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {tasksData.tasks.map(task => (
             <div
               key={task.uid}

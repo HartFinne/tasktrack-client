@@ -1,4 +1,4 @@
-import Pagination from "../../components/admin/Pagination";
+import Pagination from "../Pagination";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchUsers } from "../../api/fetchUsers";
 import { useQuery } from "@tanstack/react-query";
@@ -54,7 +54,7 @@ const UsersList = ({ limit }) => {
             key={i}
             className="p-3 rounded-lg border border-base-300 bg-base-100 animate-pulse min-h-16"
           >
-            <div className="flex items-center justify-around ">
+            <div className="flex items-center justify-between ">
               <div className="h-5 w-32 bg-base-300 rounded mb-2"></div>
               <div className="h-4 w-16 bg-base-300 rounded"></div>
             </div>
