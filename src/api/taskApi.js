@@ -55,8 +55,6 @@ export const fetchUserTasks = async (token, limit, lastUid, status) => {
   return res.json();
 };
 
-
-
 //
 export async function updateTaskStatus(token, uid, taskStatus) {
 
@@ -95,4 +93,13 @@ export async function updateTaskAssignedTo(token, taskId, taskData) {
   }
 
   return await res.json()
+}
+
+export async function fetchCountTasks(token) {
+  const res = await fetch(`${developmentUrl}tasks/count`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch tasks");
+  return res.json();
 }

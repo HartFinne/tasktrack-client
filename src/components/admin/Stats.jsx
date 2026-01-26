@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 import { useQueries } from "@tanstack/react-query";
-import { fetchTasks } from "../../api/taskApi";
+import { fetchCountTasks } from "../../api/taskApi";
 import { fetchUsers } from "../../api/fetchUsers";
 
 const Stats = () => {
@@ -17,20 +17,21 @@ const Stats = () => {
       },
       {
         queryKey: ["tasks"],
-        queryFn: () => fetchTasks(user.token),
+        queryFn: () => fetchCountTasks(user.token),
         enabled: !!user?.token,
       },
     ],
   });
 
-  const [usersResult, tasksResult] = results;
+  const [usersResult, taskCountsResult] = results;
+  const totalTasksData = taskCountsResult.data?.totalTasks || {};
 
-  // Calculate stats
+  // Extract stats
   const totalUsers = usersResult.data?.users?.length || 0;
-  const totalTasks = tasksResult.data?.tasks?.length || 0;
+  const totalTasks = totalTasksData.all || 0;
+  const inProgress = totalTasksData.in_progress || 0;
+  const done = totalTasksData.done || 0;
 
-  const inProgress = tasksResult.data?.tasks?.filter(t => t.status === "in_progress").length || 0;
-  const done = tasksResult.data?.tasks?.filter(t => t.status === "done").length || 0;
 
   return (
     <div className="stats shadow w-full">
@@ -83,7 +84,7 @@ const Stats = () => {
         </div>
         <div className="stat-title">Total Tasks</div>
         <div className="stat-value">
-          {tasksResult.isPending ? (
+          {taskCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
           ) : usersResult.isError ? (
             <span className="text-red-500">Error</span>
@@ -101,7 +102,7 @@ const Stats = () => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            class="size-8"
+            className="size-8"
           >
             <path
               fillRule="evenodd"
@@ -111,7 +112,7 @@ const Stats = () => {
         </div>
         <div className="stat-title">In Progress</div>
         <div className="stat-value">
-          {tasksResult.isPending ? (
+          {taskCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
           ) : usersResult.isError ? (
             <span className="text-red-500">Error</span>
@@ -141,9 +142,9 @@ const Stats = () => {
         </div>
         <div className="stat-title">Done</div>
         <div className="stat-value">
-          {tasksResult.isPending ? (
+          {taskCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
-          ) : usersResult.isError ? (
+          ) : taskCountsResult.isError ? (
             <span className="text-red-500">Error</span>
           ) : (
             done
