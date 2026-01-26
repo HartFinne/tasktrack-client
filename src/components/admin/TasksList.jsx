@@ -60,7 +60,6 @@ const TasksList = ({ limit }) => {
       </div>
 
       {/* Skeleton loader */}
-      {/* Skeleton loader */}
       {isPending &&
         Array.from({ length: limit }).map((_, i) => (
           <div
@@ -106,14 +105,14 @@ const TasksList = ({ limit }) => {
           >
             {/* Top row: Title + Status */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
-              <p className="font-medium text-base-content break-words">{task.title}</p>
+              <p className="font-medium text-base-content wrap-break-word">{task.title}</p>
               <span className={`${getStatusBadge(task.status)} font-semibold`}>
                 {task.status.toUpperCase()}
               </span>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-base-content/70 mb-2 line-clamp-3 break-words">
+            <p className="text-sm text-base-content/70 mb-2 line-clamp-3 wrap-break-word">
               {task.description}
             </p>
 

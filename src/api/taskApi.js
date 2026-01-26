@@ -39,19 +39,22 @@ export async function fetchTasks(token, limit = null, lastUid = null) {
 
 // to get the assign tasks to user
 //TODO: add limit and pagination
-export async function fetchUserTasks(token, limit, lastUid = null) {
+// api/taskApi.js
+export const fetchUserTasks = async (token, limit, lastUid, status) => {
+  const params = new URLSearchParams({
+    limit,
+    lastUid: lastUid || "",
+    status: status || "all",
+  });
 
-  let url = `${developmentUrl}tasks/my?limit=${limit}`
-  if (lastUid) url += `&lastUid=${lastUid}`
-  console.log("Limit:", url)
-  const res = await fetch(url, {
-    headers: { "Authorization": `Bearer ${token}` }
-  })
+  const res = await fetch(`${developmentUrl}tasks/my?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   if (!res.ok) throw new Error("Failed to fetch tasks");
-  const data = await res.json();
-  return data;
-}
+  return res.json();
+};
+
 
 
 //

@@ -13,14 +13,23 @@ const limit = 50
 const UserTasksList = () => {
   const { user } = useAuth();
   const [selectedTask, setSelectedTask] = useState(null)
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
+
+  const {
+    lastUid,
+    page,
+    hasPrev,
+    nextPage,
+    prevPage,
+    resetPagination   // 👈 NEW
+  } = useCursorPagination();
 
   console.log(user.token)
 
   const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
-    queryKey: ["userTasks", lastUid],
-    queryFn: () => fetchUserTasks(user.token, limit, lastUid),
+    queryKey: ["userTasks", lastUid, statusFilter],
+    queryFn: () => fetchUserTasks(user.token, limit, lastUid, statusFilter),
     staleTime: 60 * 1000,
     enabled: !!user?.token,
   });
@@ -29,6 +38,21 @@ const UserTasksList = () => {
 
   return (
     <>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {["all", "backlog", "in_progress", "done"].map(status => (
+          <button
+            key={status}
+            className={`btn btn-sm ${statusFilter === status ? "btn-primary" : "btn-outline"}`}
+            onClick={() => {
+              setStatusFilter(status);
+              resetPagination(); // 💥 resets to page 1 for new filter
+            }}
+          >
+            {status === "all" ? "All" : status.replace("_", " ")}
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center justify-end mb-6">
         <Pagination
           onNext={() => nextPage(tasksData.lastUid)}
