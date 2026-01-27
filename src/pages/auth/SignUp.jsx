@@ -95,7 +95,7 @@ const SignUp = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4
-        bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10
+        bg-linear-to-br from-primary/10 via-base-200 to-secondary/10
         dark:from-primary/20 dark:via-base-300 dark:to-secondary/20
         relative overflow-hidden"
     >
@@ -181,7 +181,7 @@ const SignUp = () => {
           </form>
 
           {/* Footer */}
-          <div className="divider my-6">OR</div>
+          <div className="divider">OR</div>
 
           <p className="text-center text-sm ">
             Already have an account?

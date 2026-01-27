@@ -68,14 +68,14 @@ const Login = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4
-        bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10
+        bg-linear-to-br from-primary/10 via-base-200 to-secondary/10
         dark:from-primary/20 dark:via-base-300 dark:to-secondary/20
         relative overflow-hidden"
     >
       {/* Soft glow behind card */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-105 h-[420px] rounded-full
-          bg-gradient-to-br from-primary/20 to-secondary/20
+        <div className="w-105 h-105 rounded-full
+          bg-linear-to-br from-primary/20 to-secondary/20
           blur-3xl opacity-60">
         </div>
       </div>
@@ -102,7 +102,7 @@ const Login = () => {
           {/* Header */}
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold
-              bg-gradient-to-r from-primary to-secondary
+              bg-linear-to-r from-primary to-secondary
               bg-clip-text text-transparent">
               TaskTrack
             </h1>
