@@ -23,7 +23,9 @@ const UpdateTaskModal = ({ task }) => {
   const mutation = useMutation({
     mutationFn: (updateStatus) => updateTaskStatus(user.token, task.uid, updateStatus),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userTasks", "tasks", "statTasks"] });
+      queryClient.invalidateQueries({ queryKey: ["userTasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["statTasks"] });
       document.getElementById("updateStatusModal").close();
       setToastType("success");
       setToastMessage("Succesfully updated status!");

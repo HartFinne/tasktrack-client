@@ -1,6 +1,6 @@
 import Pagination from "../Pagination";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
-import { fetchUsers } from "../../api/fetchUsers";
+import { fetchUsers } from "../../api/userApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 

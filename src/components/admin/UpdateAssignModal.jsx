@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { fetchUsers } from "../../api/fetchUsers";
+import { fetchUsers } from "../../api/userApi";
 import { updateTaskAssignedTo } from "../../api/taskApi";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../components/Toast";
