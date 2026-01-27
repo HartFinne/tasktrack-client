@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext";
 import { useQueries } from "@tanstack/react-query";
 import { fetchCountTasks } from "../../api/taskApi";
-import { fetchUsers } from "../../api/fetchUsers";
+import { fetchCountUsers } from "../../api/userApi";
 
 const Stats = () => {
 
@@ -12,7 +12,7 @@ const Stats = () => {
     queries: [
       {
         queryKey: ["users"],
-        queryFn: () => fetchUsers(user.token),
+        queryFn: () => fetchCountUsers(user.token),
         enabled: !!user?.token,
       },
       {
@@ -23,11 +23,11 @@ const Stats = () => {
     ],
   });
 
-  const [usersResult, taskCountsResult] = results;
+  const [userCountsResult, taskCountsResult] = results;
   const totalTasksData = taskCountsResult.data?.totalTasks || {};
 
   // Extract stats
-  const totalUsers = usersResult.data?.users?.length || 0;
+  const totalUsers = userCountsResult.data?.totalUsers || 0;
   const totalTasks = totalTasksData.all || 0;
   const inProgress = totalTasksData.in_progress || 0;
   const done = totalTasksData.done || 0;
@@ -54,9 +54,9 @@ const Stats = () => {
         </div>
         <div className="stat-title">Total Users</div>
         <div className="stat-value">
-          {usersResult.isPending ? (
+          {userCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
-          ) : usersResult.isError ? (
+          ) : userCountsResult.isError ? (
             <span className="text-red-500">Error</span>
           ) : (
             totalUsers
@@ -86,7 +86,7 @@ const Stats = () => {
         <div className="stat-value">
           {taskCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
-          ) : usersResult.isError ? (
+          ) : userCountsResult.isError ? (
             <span className="text-red-500">Error</span>
           ) : (
             totalTasks
@@ -114,7 +114,7 @@ const Stats = () => {
         <div className="stat-value">
           {taskCountsResult.isPending ? (
             <span className="loading loading-spinner text-primary"></span>
-          ) : usersResult.isError ? (
+          ) : userCountsResult.isError ? (
             <span className="text-red-500">Error</span>
           ) : (
             inProgress
