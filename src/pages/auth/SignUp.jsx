@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { signUp } from "../../api/authApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import RedirectByRole from "../../components/RedirectByRole.jsx";
 import FormInput from "../../components/auth/FormInput.jsx";
-import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
 import Loading from "../../components/Loading.jsx";
@@ -30,6 +29,8 @@ const SignUp = () => {
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+  const queryClient = useQueryClient();
+
   // React Query mutation
   const signUpMutation = useMutation({
     mutationFn: ({ email, password }) => signUp(email, password),
@@ -42,6 +43,7 @@ const SignUp = () => {
       setEmail("");
       setPassword("");
       setRePassword("");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
 
       // Redirect to login
       setTimeout(() => {

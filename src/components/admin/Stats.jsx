@@ -16,7 +16,7 @@ const Stats = () => {
         enabled: !!user?.token,
       },
       {
-        queryKey: ["tasks"],
+        queryKey: ["statTasks"],
         queryFn: () => fetchCountTasks(user.token),
         enabled: !!user?.token,
       },

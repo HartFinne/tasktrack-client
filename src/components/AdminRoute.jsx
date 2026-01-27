@@ -7,11 +7,11 @@ export default function AdminRoute({ children }) {
 
   if (loading) return (
     <div className="fixed inset-0 flex items-center justify-center bg-base-100 bg-opacity-80 transition-opacity duration-300">
-      <Loading message="Loading admin dashboard..." fullScreen={true} />
+      <Loading message="Loading..." fullScreen={true} />
     </div>);
 
   if (!user) return <Navigate to="/" replace />; // not logged in
-  if (user.role !== "admin") return <Navigate to="/unauthorized" replace />; // not admin
+  if (user.role !== "admin") return <Navigate to="/dashboard" replace />; // not admin
 
   return children;
 }

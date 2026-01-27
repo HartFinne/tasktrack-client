@@ -15,7 +15,6 @@ const UserTasksList = () => {
   const [selectedTask, setSelectedTask] = useState(null)
   const [statusFilter, setStatusFilter] = useState("all");
 
-
   const {
     lastUid,
     page,

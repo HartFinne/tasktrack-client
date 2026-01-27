@@ -40,34 +40,23 @@ const UpdateAssignModal = ({ task }) => {
     ? data.pages.flatMap((page) => page.users.filter((u) => u.role !== "admin"))
     : [];
 
-  // Mutation to assign task
+
   const mutation = useMutation({
     mutationFn: ({ taskId, userData }) =>
       updateTaskAssignedTo(user.token, taskId, userData),
 
-    //  OPTIMISTIC UPDATE
     onMutate: async ({ taskId, userData }) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
-      // Snapshot previous data
-      const previousTasks = queryClient.getQueriesData({
-        queryKey: ["tasks"],
-      });
+      const previousTasks = queryClient.getQueriesData({ queryKey: ["tasks"] });
 
-      // Optimistically update ALL task pages
       previousTasks.forEach(([queryKey, data]) => {
         if (!data) return;
-
         queryClient.setQueryData(queryKey, {
           ...data,
           tasks: data.tasks.map((task) =>
             task.uid === taskId
-              ? {
-                ...task,
-                assignedTo: userData.userId,
-                assignedEmail: userData.userEmail,
-              }
+              ? { ...task, assignedTo: userData.userId, assignedEmail: userData.userEmail }
               : task
           ),
         });
@@ -76,7 +65,6 @@ const UpdateAssignModal = ({ task }) => {
       return { previousTasks };
     },
 
-    //  ROLLBACK ON ERROR
     onError: (_err, _vars, context) => {
       if (context?.previousTasks) {
         context.previousTasks.forEach(([queryKey, data]) => {
@@ -87,22 +75,21 @@ const UpdateAssignModal = ({ task }) => {
       setToastMessage("Failed to assign task");
     },
 
-    //  FINALIZE
     onSuccess: () => {
       setToastType("success");
       setToastMessage("Task assigned successfully");
       document.getElementById("updateAssignModal").close();
     },
 
-    //  SYNC WITH SERVER
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Submitting taskId:", task.uid);
+    console.log("Mutate called:", task?.uid, assignedUser);
     mutation.mutate({
       taskId: task.uid,
       userData: {

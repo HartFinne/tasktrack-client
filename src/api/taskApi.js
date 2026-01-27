@@ -76,6 +76,7 @@ export async function updateTaskStatus(token, uid, taskStatus) {
 
 // router.put("/tasks/:taskId/assign", authMiddleware, adminMiddleware, taskController.assignTask)
 export async function updateTaskAssignedTo(token, taskId, taskData) {
+  console.log("update task")
   console.log(taskId)
 
   console.log("task Data: ", taskData)
@@ -87,10 +88,6 @@ export async function updateTaskAssignedTo(token, taskId, taskData) {
     },
     body: JSON.stringify(taskData)
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to update task")
-  }
 
   return await res.json()
 }
