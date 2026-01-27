@@ -11,6 +11,8 @@ import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
 import Loading from "../../components/Loading.jsx";
 
+import { getFirebaseErrorMessage } from "../../utils/firebaseErrorMessages.js";
+
 const SignUp = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -52,8 +54,12 @@ const SignUp = () => {
     },
 
     onError: (err) => {
+      console.log("FULL ERROR:", err);
+      console.log("ERROR RESPONSE:", err?.response);
+      console.log("ERROR DATA:", err?.response?.data);
+      console.log("ERROR MESSAGE:", err?.message);
       setToastType("error");
-      setToastMessage(err.message || "Something went wrong");
+      setToastMessage(getFirebaseErrorMessage(err));
     }
   });
 
@@ -95,8 +101,8 @@ const SignUp = () => {
     >
       {/* Soft glow behind card */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[420px] h-[420px] rounded-full
-          bg-gradient-to-br from-primary/20 to-secondary/20
+        <div className="w-105 h-105 rounded-full
+          bg-linear-to-br from-primary/20 to-secondary/20
           blur-3xl opacity-60">
         </div>
       </div>

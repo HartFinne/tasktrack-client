@@ -7,10 +7,11 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import RedirectByRole from "../../components/RedirectByRole.jsx";
 
 import FormInput from "../../components/auth/FormInput.jsx";
-import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
 import Loading from "../../components/Loading.jsx";
+
+import { getFirebaseErrorMessage } from "../../utils/firebaseErrorMessages.js";
 
 const Login = () => {
   const { user, loading: authLoading } = useAuth();
@@ -32,8 +33,9 @@ const Login = () => {
 
     },
     onError: (err) => {
+      console.log("Firebase error:", err); // optional for debugging
       setToastType("error");
-      setToastMessage(err.message || "Something went wrong");
+      setToastMessage(getFirebaseErrorMessage(err));
     }
   });
 

@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 // SignUp
 export async function signUp(email, password) {
+  console.log("signup")
   // Create user in Firebase
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const token = await userCredential.user.getIdToken();
