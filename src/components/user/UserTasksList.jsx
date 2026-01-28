@@ -26,7 +26,7 @@ const UserTasksList = () => {
 
   console.log(user.token)
 
-  const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
+  const { data: tasksData = { tasks: [], lastUid: null, hasNext: false }, isPending, isError, error } = useQuery({
     queryKey: ["userTasks", lastUid, statusFilter],
     queryFn: () => fetchUserTasks(user.token, limit, lastUid, statusFilter),
     staleTime: 60 * 1000,
@@ -61,7 +61,7 @@ const UserTasksList = () => {
         <Pagination
           onNext={() => nextPage(tasksData.lastUid)}
           onPrev={prevPage}
-          hasNext={!!tasksData.lastUid}
+          hasNext={tasksData.hasNext}
           hasPrev={hasPrev}
           page={page}
         />
