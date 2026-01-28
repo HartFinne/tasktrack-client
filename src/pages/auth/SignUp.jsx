@@ -47,17 +47,9 @@ const SignUp = () => {
       setRePassword("");
       queryClient.invalidateQueries({ queryKey: ["users"] });
 
-      // Redirect to login
-      setTimeout(() => {
-        navigate("/", { replace: true });
-      }, 2000);
     },
 
     onError: (err) => {
-      console.log("FULL ERROR:", err);
-      console.log("ERROR RESPONSE:", err?.response);
-      console.log("ERROR DATA:", err?.response?.data);
-      console.log("ERROR MESSAGE:", err?.message);
       setToastType("error");
       setToastMessage(getFirebaseErrorMessage(err));
     }

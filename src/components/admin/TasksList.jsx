@@ -12,7 +12,7 @@ const TasksList = ({ limit }) => {
 
   const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
 
-  const { data: tasksData = { tasks: [], lastUid: null }, isPending, isError, error } = useQuery({
+  const { data: tasksData = { tasks: [], lastUid: null, hasNext: false }, isPending, isError, error } = useQuery({
     queryKey: ["tasks", lastUid],
     queryFn: () => fetchTasks(user.token, limit, lastUid),
     staleTime: 60 * 1000,
@@ -51,11 +51,11 @@ const TasksList = ({ limit }) => {
         </div>
 
         <Pagination
+          page={page}
           onNext={() => nextPage(tasksData.lastUid)}
           onPrev={prevPage}
-          hasNext={!!tasksData.lastUid}
+          hasNext={tasksData.hasNext}
           hasPrev={hasPrev}
-          page={page}
         />
       </div>
 

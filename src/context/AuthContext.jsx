@@ -58,8 +58,8 @@ function AuthProvider({ children }) {
         setLoading(false);
       }
 
-      const remaining =
-        LOGIN_EXPIRATION_SECONDS * 1000 - (now - (loginTime || now));
+      const loginTimestamp = Number(loginTime) || now;
+      const remaining = LOGIN_EXPIRATION_SECONDS * 1000 - (now - loginTimestamp);
 
       logoutTimeout = setTimeout(() => {
         logout();

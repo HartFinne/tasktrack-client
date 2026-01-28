@@ -47,7 +47,12 @@ const UserTasksList = () => {
               resetPagination(); // 💥 resets to page 1 for new filter
             }}
           >
-            {status === "all" ? "All" : status.replace("_", " ")}
+            {status === "all"
+              ? "All"
+              : status
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, c => c.toUpperCase())
+            }
           </button>
         ))}
       </div>
@@ -78,14 +83,15 @@ const UserTasksList = () => {
           {tasksData.tasks.map(task => (
             <div
               key={task.uid}
-              className="card bg-base-200 shadow-lg border border-base-300"
+              className="card bg-base-100 shadow-md border border-base-300 hover:shadow-xl transition"
+
             >
-              <div className="card-body">
+              <div className="card-body space-y-3">
                 <h2 className="card-title justify-between items-center">
                   {task.title}
                   <span
                     className={`badge ${task.status === "backlog"
-                      ? "badge-secondary"
+                      ? "badge-ghost"
                       : task.status === "in_progress"
                         ? "badge-warning"
                         : "badge-success"
@@ -95,7 +101,7 @@ const UserTasksList = () => {
                   </span>
                 </h2>
 
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-base-content/70">
                   {task.description}
                 </p>
 
@@ -105,7 +111,8 @@ const UserTasksList = () => {
                   </span>
 
                   <button
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-sm btn-primary transition hover:scale-105 active:scale-95"
+
                     onClick={() => {
                       setSelectedTask(task)
                       document
