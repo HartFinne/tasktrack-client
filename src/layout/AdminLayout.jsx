@@ -40,7 +40,7 @@ const Sidebar = () => {
           <ul className="menu w-full grow">
             <li>
               <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right " data-tip={"TaskTrack"}>
-                <p className="my-1.5 inline-block size-5 font-bold ml-0.5">TT</p>
+                <p className="my-1.5 inline-block size-4 font-bold ">TT</p>
                 <span className="is-drawer-close:hidden">TaskTrack</span>
               </span>
             </li>
@@ -51,7 +51,10 @@ const Sidebar = () => {
               <li key={page.path}>
                 <Link
                   to={page.path}
-                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                  className={`is-drawer-close:tooltip is-drawer-close:tooltip-right flex items-center rounded-lg transition-colors ${location.pathname === page.path
+                    ? "bg-primary text-primary-content"
+                    : "hover:bg-base-300 hover:text-base-content"
+                    }`}
                   data-tip={page.title}
                 >
                   {page.icon}
@@ -60,8 +63,8 @@ const Sidebar = () => {
               </li>
             ))}
             <li className="mb-2">
-              <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right hover:bg-red-500 hover:text-white transition-colors duration-200" data-tip={"Logout"} onClick={logout}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="my-1.5 inline-block size-4 ml-0.5">
+              <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right hover:bg-error hover:text-white transition-colors duration-200" data-tip={"Logout"} onClick={logout}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
                 </svg>
 

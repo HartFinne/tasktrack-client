@@ -24,24 +24,19 @@ const AdminDashboard = () => {
 
       <CreateTaskModal />
 
-      {/* Users and Tasks side by side (responsive) */}
-      <div className="flex flex-col lg:flex-row gap-4">
 
-        {/* Users Card */}
-        <div className="flex-1 card bg-base-200 shadow">
-          <div className="card-body text-base-content">
-            <UsersList limit={limit} />
-          </div>
+      {/* Users Card */}
+      <div className="flex-1 card bg-base-200 shadow">
+        <div className="card-body text-base-content">
+          <UsersList limit={limit} />
         </div>
-
-        {/* Tasks Card */}
-        <div className="flex-1 card bg-base-200 shadow">
-          <div className="card-body text-base-content">
-            <TasksList limit={limit} />
-          </div>
-        </div>
-
       </div>
+
+      {/* Tasks Card */}
+      <div className="card-body text-base-content">
+        <TasksList limit={limit} />
+      </div>
+
 
     </div>
   );

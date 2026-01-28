@@ -1,4 +1,4 @@
-import Pagination from "../Pagination.jsx"
+import Pagination from "../Pagination.jsx";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchTasks } from "../../api/taskApi";
 import { useQuery } from "@tanstack/react-query";
@@ -8,11 +8,16 @@ import { useState } from "react";
 
 const TasksList = ({ limit }) => {
   const { user } = useAuth();
-  const [selectedTask, setSelectedTask] = useState(null)
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
 
-  const { data: tasksData = { tasks: [], lastUid: null, hasNext: false }, isPending, isError, error } = useQuery({
+  const {
+    data: tasksData = { tasks: [], lastUid: null, hasNext: false },
+    isPending,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["tasks", lastUid],
     queryFn: () => fetchTasks(user.token, limit, lastUid),
     staleTime: 60 * 1000,
@@ -20,7 +25,7 @@ const TasksList = ({ limit }) => {
   });
 
   const getStatusBadge = (status) => {
-    if (status === "backlog") return "badge badge-info";
+    if (status === "backlog") return "badge badge-ghost";
     if (status === "in_progress") return "badge badge-warning";
     if (status === "done") return "badge badge-success";
     return "badge badge-outline";
@@ -59,80 +64,114 @@ const TasksList = ({ limit }) => {
         />
       </div>
 
-      {/* Skeleton loader */}
-      {isPending &&
-        Array.from({ length: limit }).map((_, i) => (
-          <div
-            key={i}
-            className="p-3 rounded-lg border border-base-300 animate-pulse bg-base-200"
-          >
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-              <div className="h-4 w-2/3 sm:w-1/3 bg-base-300 rounded"></div>
-              <div className="h-4 w-24 sm:w-20 bg-base-300 rounded"></div>
-            </div>
-
-            <div className="mt-3 space-y-2">
-              <div className="h-3 w-full bg-base-300 rounded"></div>
-              <div className="h-3 w-5/6 bg-base-300 rounded"></div>
-              <div className="h-3 w-2/3 bg-base-300 rounded"></div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mt-4">
-              <div className="h-6 w-28 bg-base-300 rounded"></div>
-              <div className="h-8 w-20 bg-base-300 rounded"></div>
-            </div>
-          </div>
-        ))}
-
+      {/* Skeleton Loader */}
+      {isPending && (
+        <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: limit }).map((_, i) => (
+                <tr key={i} className="animate-pulse">
+                  <td>
+                    <div className="h-4 w-40 bg-base-300 rounded mb-2"></div>
+                    <div className="h-3 w-64 bg-base-300 rounded"></div>
+                  </td>
+                  <td><div className="h-6 w-20 bg-base-300 rounded"></div></td>
+                  <td><div className="h-6 w-32 bg-base-300 rounded"></div></td>
+                  <td className="text-right">
+                    <div className="h-8 w-16 bg-base-300 rounded ml-auto"></div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Error */}
       {isError && (
-        <div className="text-center text-error">Error loading tasks: {error.message}</div>
+        <div className="text-center text-error">
+          Error loading tasks: {error.message}
+        </div>
       )}
 
-      {/* No tasks */}
+      {/* Empty State */}
       {!isPending && !isError && tasksData.tasks.length === 0 && (
-        <div className="text-center text-base-content/70">No tasks found.</div>
+        <div className="text-center text-base-content/70 py-10">
+          No tasks found.
+        </div>
       )}
 
-      {/* Task list */}
-      {!isPending &&
-        !isError &&
-        tasksData.tasks.map((task) => (
-          <div
-            key={task.uid}
-            className="p-3 rounded-lg border border-base-300 hover:bg-base-300 transition-colors bg-base-100 flex flex-col md:flex-col gap-2"
-          >
-            {/* Top row: Title + Status */}
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
-              <p className="font-medium text-base-content wrap-break-word">{task.title}</p>
-              <span className={`${getStatusBadge(task.status)} font-semibold`}>
-                {task.status.toUpperCase()}
-              </span>
-            </div>
+      {/* Task Table */}
+      {!isPending && !isError && tasksData.tasks.length > 0 && (
+        <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
+          <table className="table table-zebra">
+            <thead className="bg-base-200 text-base-content">
+              <tr>
+                <th className="w-[35%]">Task</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasksData.tasks.map((task) => (
+                <tr key={task.uid} className="hover">
+                  {/* Task Info */}
+                  <td>
+                    <div className="font-semibold">{task.title}</div>
+                    <div className="text-sm text-base-content/70 line-clamp-2">
+                      {task.description}
+                    </div>
+                  </td>
 
-            {/* Description */}
-            <p className="text-sm text-base-content/70 mb-2 line-clamp-3 wrap-break-word">
-              {task.description}
-            </p>
+                  {/* Status */}
+                  <td>
+                    <span className={`${getStatusBadge(task.status)} font-medium`}>
+                      {task.status.replace(/_/g, " ").toUpperCase()}
+                    </span>
+                  </td>
 
-            {/* Bottom row: Assigned Email + Edit button */}
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 flex-wrap">
-              <span className="badge badge-soft badge-secondary">
-                {task.assignedEmail || "Unassigned"}
-              </span>
-              <button
-                className="btn btn-primary btn-sm w-full md:w-auto"
-                onClick={() => {
-                  setSelectedTask(task);
-                  document.getElementById("updateAssignModal").showModal();
-                }}
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-        ))}
+                  {/* Assigned */}
+                  <td>
+                    {task.assignedEmail ? (
+                      <span className="badge badge-soft badge-secondary">
+                        {task.assignedEmail}
+                      </span>
+                    ) : (
+                      <span className="text-base-content/50 italic">
+                        Unassigned
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="text-right">
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => {
+                        setSelectedTask(task);
+                        document
+                          .getElementById("updateAssignModal")
+                          .showModal();
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
