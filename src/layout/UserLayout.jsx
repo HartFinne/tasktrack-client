@@ -78,7 +78,7 @@ const UserLayout = () => {
         <div className="navbar-end">
           <button
             onClick={logout}
-            className="btn btn-sm btn-outline btn-error hover:btn-error hover:text-white transition"
+            className="btn btn-sm btn-soft btn-error hover:btn-error hover:text-white transition"
           >
             Logout
           </button>
