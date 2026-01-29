@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { updateTaskStatus } from "../../api/taskApi";
 
 import Toast from "../../components/Toast"
+import formatCreatedAt from "../../utils/formatCreatedAt"
 
 const UpdateTaskModal = ({ task }) => {
   const { user } = useAuth();
@@ -53,15 +54,22 @@ const UpdateTaskModal = ({ task }) => {
       />
 
       <dialog id="updateStatusModal" className="modal">
-        <div className="modal-box max-w-md">
-          <h3 className="font-bold text-xl mb-4">Update Status</h3>
-
+        <div className="modal-box w-full sm:w-[0%] md:w-120 lg:w-200 max-w-full">
           {task && (
             <form
               key={task.uid}
               onSubmit={handleSubmit}
               className="space-y-4"
             >
+
+              <div className="card-actions justify-between items-center mt-auto">
+                <h3 className="font-bold text-xl mb-4">Update Status</h3>
+
+                <span className="text-xs opacity-60">
+                  Created at: {formatCreatedAt(task.createdAt)}
+                </span>
+              </div>
+              {/* Task Title */}
               <div>
                 <label className="label">
                   <span className="label-text">Task</span>
@@ -69,6 +77,15 @@ const UpdateTaskModal = ({ task }) => {
                 <p className="font-semibold">{task.title}</p>
               </div>
 
+              {/* Task Description */}
+              <div>
+                <label className="label">
+                  <span className="label-text">Description</span>
+                </label>
+                <p className="font-normal">{task.description}</p>
+              </div>
+
+              {/* Task Status */}
               <div>
                 <label className="label">
                   <span className="label-text">Status</span>
@@ -86,7 +103,7 @@ const UpdateTaskModal = ({ task }) => {
 
               <div className="modal-action">
                 <button disabled={mutation.isPending} className="btn btn-primary">
-                  {mutation.isPending ? "Saving..." : "Update Status"}
+                  {mutation.isPending ? "Saving..." : "Update"}
                 </button>
                 <button
                   type="button"
@@ -100,7 +117,6 @@ const UpdateTaskModal = ({ task }) => {
               </div>
             </form>
           )}
-
         </div>
 
         <form method="dialog" className="modal-backdrop">

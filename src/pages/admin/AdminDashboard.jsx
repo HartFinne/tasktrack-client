@@ -2,11 +2,13 @@ import UsersList from "../../components/admin/UsersList";
 import TasksList from "../../components/admin/TasksList";
 import CreateTaskModal from "../../components/admin/CreateTaskModal";
 import Stats from "../../components/admin/Stats";
-import UsersPieChart from "../../components/admin/UsersPieChart";
-import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useQueries } from "@tanstack/react-query";
+import { fetchCountTasks } from "../../api/taskApi";
+import { fetchCountUsers } from "../../api/userApi";
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const { user } = useAuth();
   const limit = 15;
 
   const users = [
@@ -15,8 +17,24 @@ const AdminDashboard = () => {
     { name: 'Charlie', role: 'employee' },
   ];
 
+  // Fetch users and tasks in parallel
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["users"],
+        queryFn: () => fetchCountUsers(user.token),
+        enabled: !!user?.token,
+      },
+      {
+        queryKey: ["statTasks"],
+        queryFn: () => fetchCountTasks(user.token),
+        enabled: !!user?.token,
+      },
+    ],
+  });
+
   return (
-    <div className="p-6 text-base-content">
+    <div className="p-1 text-base-content">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -34,24 +52,16 @@ const AdminDashboard = () => {
 
       {/* Stats Section */}
       <div className="mt-2 mb-6">
-        <Stats />
+        <Stats counts={results} />
       </div>
 
       <CreateTaskModal />
-      <div className="flex flex-col lg:flex-row gap-1 items-start mb-1">
 
-        {/* Users List Card — 70% */}
-        <div className="card bg-base-200 shadow w-full lg:w-[65%] min-w-0">
-          <div className="card-body">
-            <UsersList limit={limit} />
-          </div>
-        </div>
 
-        {/* Pie Chart Card — 30% */}
-        <div className="card bg-base-200 shadow w-full lg:w-[35%] min-w-0">
-          <div className="card-body items-center">
-            <UsersPieChart users={users} />
-          </div>
+      {/* Users List Card — 70% */}
+      <div className="card bg-base-200 shadow mb-3">
+        <div className="card-body">
+          <UsersList limit={limit} />
         </div>
       </div>
 

@@ -66,7 +66,7 @@ const UsersList = ({ limit }) => {
           <tbody>
             {/* Skeleton Loader */}
             {isPending &&
-              Array.from({ length: limit }).map((_, i) => (
+              Array.from({ length: limit - 1 }).map((_, i) => (
                 <tr key={i} className="animate-pulse">
                   <td><div className="h-4 w-48 bg-base-300 rounded"></div></td>
                   <td><div className="h-6 w-20 bg-base-300 rounded"></div></td>
@@ -119,6 +119,7 @@ const UsersList = ({ limit }) => {
         />
       </div>
     </div>
+
   );
 };
 

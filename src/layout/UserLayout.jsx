@@ -55,7 +55,7 @@ const UserLayout = () => {
 
         {/* Center: Desktop Nav */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1 gap-1">
+          <ul className="menu menu-horizontal px-1 gap-2">
             {userConfig.map((page) => (
               <li key={page.path}>
                 <NavLink
@@ -63,7 +63,7 @@ const UserLayout = () => {
                   className={({ isActive }) =>
                     `rounded-lg px-3 py-2 font-medium transition ${isActive
                       ? "bg-primary text-primary-content"
-                      : "bg-base-200/60 hover:bg-base-300/70"
+                      : "bg-base-200/50 hover:bg-base-300"
                     }`
                   }
                 >

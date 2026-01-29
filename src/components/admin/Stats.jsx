@@ -1,29 +1,6 @@
-import { useAuth } from "../../context/AuthContext";
-import { useQueries } from "@tanstack/react-query";
-import { fetchCountTasks } from "../../api/taskApi";
-import { fetchCountUsers } from "../../api/userApi";
 
-const Stats = () => {
-
-  const { user } = useAuth();
-
-  // Fetch users and tasks in parallel
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: ["users"],
-        queryFn: () => fetchCountUsers(user.token),
-        enabled: !!user?.token,
-      },
-      {
-        queryKey: ["statTasks"],
-        queryFn: () => fetchCountTasks(user.token),
-        enabled: !!user?.token,
-      },
-    ],
-  });
-
-  const [userCountsResult, taskCountsResult] = results;
+const Stats = ({ counts }) => {
+  const [userCountsResult, taskCountsResult] = counts;
   const totalTasksData = taskCountsResult.data?.totalTasks || {};
 
   // Extract stats

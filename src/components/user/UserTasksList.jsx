@@ -15,14 +15,7 @@ const UserTasksList = () => {
   const [selectedTask, setSelectedTask] = useState(null)
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const {
-    lastUid,
-    page,
-    hasPrev,
-    nextPage,
-    prevPage,
-    resetPagination
-  } = useCursorPagination();
+  const { lastUid, page, hasPrev, nextPage, prevPage, resetPagination } = useCursorPagination();
 
   console.log(user.token)
 
@@ -120,7 +113,7 @@ const UserTasksList = () => {
                       document.getElementById("updateStatusModal").showModal();
                     }}
                   >
-                    Update Status
+                    Update
                   </button>
                 </div>
 
