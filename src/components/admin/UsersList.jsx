@@ -24,7 +24,7 @@ const UsersList = ({ limit }) => {
   return (
     <div className="mt-0.5 space-y-4 w-full text-base-content">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
         <div className="flex items-center gap-2 text-xl font-bold">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,14 +43,18 @@ const UsersList = ({ limit }) => {
           Users
 
         </div>
-        <Filter
-          options={USER_ROLE}
-          value={roleFilter}
-          onChange={(newStatus) => {
-            setRoleFilter(newStatus);
-            resetPagination();
-          }}
-        />
+
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+          <Filter
+            className="w-full sm:w-48 md:w-60 lg:w-72"
+            options={USER_ROLE}
+            value={roleFilter}
+            onChange={(newStatus) => {
+              setRoleFilter(newStatus);
+              resetPagination();
+            }}
+          />
+        </div>
       </div>
 
       {/* TABLE CONTAINER */}

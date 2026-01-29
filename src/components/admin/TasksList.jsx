@@ -56,37 +56,10 @@ const TasksList = ({ limit }) => {
           Tasks
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
-          {/* Search */}
-          <label className="input input-bordered flex items-center gap-2 grow">
-            <svg
-              className="h-4 w-4 opacity-50"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2.5"
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </g>
-            </svg>
-            <input
-              type="search"
-              placeholder="Search"
-              className="input-grow bg-base-100"
-            />
-            <kbd className="kbd kbd-sm">⌘</kbd>
-            <kbd className="kbd kbd-sm">K</kbd>
-          </label>
 
-          {/* Status Filter */}
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
           <Filter
+            className="w-full sm:w-48 md:w-60 lg:w-72"
             options={TASK_STATUSES}
             value={statusFilter}
             onChange={(newStatus) => {
@@ -94,8 +67,6 @@ const TasksList = ({ limit }) => {
               resetPagination();
             }}
           />
-
-
         </div>
       </div>
 
