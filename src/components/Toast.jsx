@@ -28,7 +28,7 @@ const Toast = ({ type = "success", message, duration = 3000, onClose }) => {
 
   return (
     <div className="toast toast-top toast-end z-50">
-      <div className={`alert ${alertClassMap[type] || "alert-info"} shadow-lg`}>
+      <div className={`alert ${alertClassMap[type] || "alert-info"} alert-soft shadow-lg`}>
         <div>
           {message.split("\n").map((line, i) => (
             <span key={i} className="block">{line}</span>
