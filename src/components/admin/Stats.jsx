@@ -34,7 +34,7 @@ const Stats = () => {
 
 
   return (
-    <div className="stats shadow w-full">
+    <div className="stats stats-vertical lg:stats-horizontal shadow-lg w-full">
       {/* Total Users */}
       <div className="stat">
         <div className="stat-figure text-primary">
@@ -62,12 +62,12 @@ const Stats = () => {
             totalUsers
           )}
         </div>
-        <div className="stat-desc">All registered users</div>
+        <div className="stat-desc text-base-content/60">System users</div>
       </div>
 
       {/* Total Tasks */}
       <div className="stat">
-        <div className="stat-figure text-success">
+        <div className="stat-figure text-info">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -92,7 +92,7 @@ const Stats = () => {
             totalTasks
           )}
         </div>
-        <div className="stat-desc">All created tasks</div>
+        <div className="stat-desc text-base-content/60">Tasks in database</div>
       </div>
 
       {/* In Progress */}
@@ -120,7 +120,7 @@ const Stats = () => {
             inProgress
           )}
         </div>
-        <div className="stat-desc">Currently being worked on</div>
+        <div className="stat-desc text-base-content/60">Active workload</div>
       </div>
 
       {/* Done */}
@@ -150,7 +150,7 @@ const Stats = () => {
             done
           )}
         </div>
-        <div className="stat-desc">Completed tasks</div>
+        <div className="stat-desc text-base-content/60">Successfully completed</div>
       </div>
     </div>
 

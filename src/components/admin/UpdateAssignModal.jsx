@@ -110,10 +110,39 @@ const UpdateAssignModal = ({ task }) => {
 
       <dialog id="updateAssignModal" className="modal">
         <div className="modal-box max-w-2xl">
-          <h3 className="font-bold text-xl mb-4">Assign an Employee</h3>
 
           {task && (
             <form key={task.uid} onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex justify-between">
+                <h3 className="font-bold text-xl mb-4">Task</h3>
+                <span
+                  className={`badge ${task.status === "backlog"
+                    ? "badge-neutral"
+                    : task.status === "in_progress"
+                      ? "badge-warning"
+                      : task.status === "done"
+                        ? "badge-success"
+                        : "badge-outline"
+                    } font-semibold`}
+                >
+                  {task.status.replace("_", " ").toUpperCase()}
+                </span>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text">Title</span>
+                </label>
+                <p className="font-semibold">{task.title}</p>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text">Description</span>
+                </label>
+                <p className="font-semibold">{task.description}</p>
+              </div>
+
               <div>
                 <label className="label">
                   <span className="label-text">Currently Assigned To</span>
@@ -123,7 +152,7 @@ const UpdateAssignModal = ({ task }) => {
 
               <div>
                 <label className="label">
-                  <span className="label-text">Assign to (Email)</span>
+                  <span className="label-text mb-2">Assign to (Email)</span>
                 </label>
 
                 <select
@@ -170,7 +199,7 @@ const UpdateAssignModal = ({ task }) => {
                   {mutation.isPending ? (
                     <span className="loading loading-spinner"></span>
                   ) : (
-                    "Update Task"
+                    "Update"
                   )}
                 </button>
                 <button

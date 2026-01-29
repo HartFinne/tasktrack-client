@@ -1,11 +1,15 @@
 import Pagination from "../Pagination";
+import Filter from "./Filter";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
 import { fetchUsers } from "../../api/userApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 const UsersList = ({ limit }) => {
   const { user } = useAuth();
+  const [roleFilter, setRoleFilter] = useState("employee");
+  const USER_ROLE = ["employee", "admin"];
 
   // Cursor pagination for users
   const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
@@ -21,7 +25,7 @@ const UsersList = ({ limit }) => {
     <div className="mt-2 space-y-4 w-full text-base-content">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xl font-bold mb-2">
+        <div className="flex items-center gap-2 text-xl font-bold">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -37,8 +41,75 @@ const UsersList = ({ limit }) => {
             />
           </svg>
           Users
-        </div>
 
+        </div>
+        <Filter
+          options={USER_ROLE}
+          value={roleFilter}
+          onChange={(newStatus) => {
+            setRoleFilter(newStatus);
+            resetPagination();
+          }}
+        />
+      </div>
+
+      {/* TABLE CONTAINER */}
+      <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
+        <table className="table">
+          <thead className="bg-base-200 text-base-content">
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {/* Skeleton Loader */}
+            {isPending &&
+              Array.from({ length: limit }).map((_, i) => (
+                <tr key={i} className="animate-pulse">
+                  <td><div className="h-4 w-48 bg-base-300 rounded"></div></td>
+                  <td><div className="h-6 w-20 bg-base-300 rounded"></div></td>
+                </tr>
+              ))}
+
+            {/* Error */}
+            {isError && (
+              <tr>
+                <td colSpan="3" className="text-center text-error py-6">
+                  Error loading users: {error.message}
+                </td>
+              </tr>
+            )}
+
+            {/* Empty State */}
+            {!isPending && !isError && usersData.users.length === 0 && (
+              <tr>
+                <td colSpan="3" className="text-center text-base-content/70 py-6">
+                  No users found.
+                </td>
+              </tr>
+            )}
+
+            {/* Users */}
+            {!isPending &&
+              !isError &&
+              usersData.users.map((userItem) => (
+                <tr key={userItem.uid} className="hover:bg-base-200 cursor-pointer">
+                  <td className="font-medium w-[50%]">{userItem.email}</td>
+
+                  <td>
+                    <span className="badge badge-secondary badge-outline capitalize">
+                      {userItem.role}
+                    </span>
+                  </td>
+
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex justify-end">
         <Pagination
           onNext={() => nextPage(usersData.lastUid)}
           onPrev={prevPage}
@@ -47,45 +118,6 @@ const UsersList = ({ limit }) => {
           page={page}
         />
       </div>
-      {/* Skeleton loader */}
-      {isPending &&
-        Array.from({ length: limit }).map((_, i) => (
-          <div
-            key={i}
-            className="p-3 rounded-lg border border-base-300 bg-base-100 animate-pulse min-h-16"
-          >
-            <div className="flex items-center justify-between ">
-              <div className="h-5 w-32 bg-base-300 rounded mb-2"></div>
-              <div className="h-4 w-16 bg-base-300 rounded"></div>
-            </div>
-          </div>
-        ))}
-
-      {/* Error */}
-      {isError && (
-        <div className="text-center text-error">Error loading users: {error.message}</div>
-      )}
-
-      {/* No users */}
-      {!isPending && !isError && usersData.users.length === 0 && (
-        <div className="text-center text-base-content/70">No users found.</div>
-      )}
-
-      {/* User list */}
-      {!isPending &&
-        !isError &&
-        usersData.users.map((userItem) => (
-          <div
-            key={userItem.uid}
-            className="p-3 rounded-lg border border-base-300 hover:bg-base-300 transition-colors bg-base-100 min-h-16"
-          >
-
-            <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
-              <p className="font-medium text-base-content">{userItem.email}</p>
-              <span className="badge badge-soft badge-secondary">{userItem.role}</span>
-            </div>
-          </div>
-        ))}
     </div>
   );
 };

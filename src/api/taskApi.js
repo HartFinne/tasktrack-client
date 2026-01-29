@@ -20,14 +20,15 @@ export async function createTask(token, taskData) {
 }
 
 // to get all the tasks in admin
-export async function fetchTasks(token, limit = null, lastUid = null) {
-  let url = `${developmentUrl}tasks`
+export async function fetchTasks(token, limit = null, lastUid = null, status = null) {
+  const params = new URLSearchParams({
+    limit,
+    lastUid: lastUid || "",
+    status: status || "all",
+  });
 
-  if (limit) url += `?limit=${limit}`
-  if (lastUid) url += `&lastUid=${lastUid}`
-
-  const res = await fetch(url, {
-    headers: { "Authorization": `Bearer ${token}` }
+  const res = await fetch(`${developmentUrl}tasks?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) throw new Error("Failed to fetch tasks");

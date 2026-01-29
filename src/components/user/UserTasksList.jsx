@@ -21,7 +21,7 @@ const UserTasksList = () => {
     hasPrev,
     nextPage,
     prevPage,
-    resetPagination   // 👈 NEW
+    resetPagination
   } = useCursorPagination();
 
   console.log(user.token)

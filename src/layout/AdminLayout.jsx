@@ -1,11 +1,14 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { Activity, useState } from "react"; // assuming React 18 Activity API
 
 import { adminConfig } from "../routes/adminConfig";
 
 const Sidebar = () => {
   const location = useLocation();
   const { logout } = useAuth();
+
+  const [isShowingSidebar, setIsShowingSidebar] = useState(true);
 
   // Find the current page by matching location
   const currentPage = adminConfig.find(
@@ -62,7 +65,7 @@ const Sidebar = () => {
                 </Link>
               </li>
             ))}
-            <li className="mb-2">
+            <li className="mb-2 flex justify-end">
               <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right hover:bg-error hover:text-white transition-colors duration-200" data-tip={"Logout"} onClick={logout}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
