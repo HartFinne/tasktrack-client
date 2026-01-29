@@ -63,7 +63,7 @@ const TasksList = ({ limit }) => {
         {/* Controls */}
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
           {/* Search */}
-          <label className="input input-bordered flex items-center gap-2 flex-grow">
+          <label className="input input-bordered flex items-center gap-2 grow">
             <svg
               className="h-4 w-4 opacity-50"
               xmlns="http://www.w3.org/2000/svg"
