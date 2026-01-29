@@ -12,11 +12,12 @@ export async function createTask(token, taskData) {
     body: JSON.stringify(taskData),
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    throw new Error("Failed to create task");
+    throw new Error(data.message || "Something went wrong");
   }
 
-  return await res.json(); // return created task
+  return data;
 }
 
 // to get all the tasks in admin

@@ -83,6 +83,7 @@ const UpdateAssignModal = ({ task }) => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["userTasks"] });
     },
   });
 

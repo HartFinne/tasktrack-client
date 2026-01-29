@@ -1,5 +1,4 @@
-import React from "react";
-import { PieChart, Pie, Sector } from "recharts";
+import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
 const RADIAN = Math.PI / 180;
 const COLORS = ["#0088FE", "#00C49F"]; // Blue = Admin, Green = Employee
@@ -35,36 +34,31 @@ const UsersPieChart = ({ users }) => {
   ];
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: 500,
-        margin: "0 auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 16, // space between chart and legend
-      }}
-    >
-      <PieChart width={400} height={400}>
-        <Pie
-          data={data}
-          labelLine={false}
-          label={renderCustomizedLabel}
-          dataKey="value"
-          isAnimationActive={true}
-          shape={MyCustomPie}
-        />
-      </PieChart>
+    <div className="w-full flex flex-col items-center gap-4">
+      {/* Responsive PieChart */}
+      <div className="w-full h-90">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              labelLine={false}
+              label={renderCustomizedLabel}
+              dataKey="value"
+              isAnimationActive={true}
+              shape={MyCustomPie}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
       {/* Legend */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 16, height: 16, backgroundColor: COLORS[0] }}></div>
+      <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex items-center gap-2">
+          <span className="w-4 h-4 rounded-sm" style={{ backgroundColor: COLORS[0] }}></span>
           <span>Admins: {adminCount}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 16, height: 16, backgroundColor: COLORS[1] }}></div>
+        <div className="flex items-center gap-2">
+          <span className="w-4 h-4 rounded-sm" style={{ backgroundColor: COLORS[1] }}></span>
           <span>Employees: {employeeCount}</span>
         </div>
       </div>

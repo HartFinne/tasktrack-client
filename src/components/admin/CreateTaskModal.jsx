@@ -18,9 +18,9 @@ const CreateTaskModal = () => {
       setToastType("success");
       setToastMessage("Succesfully created task!");
     },
-    onError: () => {
+    onError: (error) => {
       setToastType("error");
-      setToastMessage(err.message || "Something went wrong");
+      setToastMessage(error.message || "Something went wrong");
     }
   });
 

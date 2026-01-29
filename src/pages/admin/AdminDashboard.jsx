@@ -38,46 +38,31 @@ const AdminDashboard = () => {
       </div>
 
       <CreateTaskModal />
+      <div className="flex flex-col lg:flex-row gap-1 items-start mb-1">
 
-      {/* Tabs */}
-      <div className="flex gap-2.5 mb-6">
-        {["overview", "users", "tasks"].map((tab) => (
-          <button
-            key={tab}
-            className={`btn btn-sm ${activeTab === tab ? "btn-primary" : "btn-outline"}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === "overview" && (
-        <div className="card bg-base-200 shadow">
-          <div className="card-body">
-            <UsersPieChart users={users} />
-          </div>
-        </div>
-      )}
-
-      {activeTab === "users" && (
-        <div className="card bg-base-300 shadow">
+        {/* Users List Card — 70% */}
+        <div className="card bg-base-200 shadow w-full lg:w-[65%] min-w-0">
           <div className="card-body">
             <UsersList limit={limit} />
           </div>
         </div>
-      )}
 
-      {activeTab === "tasks" && (
-        <div className="card bg-base-300 shadow">
-          <div className="card-body">
-            <TasksList limit={limit} />
+        {/* Pie Chart Card — 30% */}
+        <div className="card bg-base-200 shadow w-full lg:w-[35%] min-w-0">
+          <div className="card-body items-center">
+            <UsersPieChart users={users} />
           </div>
         </div>
-      )}
+      </div>
 
-    </div>
+      <div className="card bg-base-200 shadow">
+        <div className="card-body">
+          <TasksList limit={limit} />
+        </div>
+      </div>
+
+
+    </div >
   );
 };
 

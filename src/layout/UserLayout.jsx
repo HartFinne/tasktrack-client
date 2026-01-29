@@ -1,6 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { Outlet } from "react-router-dom";
+
 import { userConfig } from "../routes/userConfig";
 
 const UserLayout = () => {
@@ -9,18 +9,29 @@ const UserLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-base-200">
       {/* Navbar */}
-      <div className="navbar bg-base-100 border-b border-base-300 px-4 lg:px-8">
+      <div className="navbar sticky top-0 z-50 bg-base-100/30 backdrop-blur border-b border-base-300 px-4 lg:px-8">
         {/* Left: Brand + Mobile Menu */}
         <div className="navbar-start gap-2">
           {/* Mobile dropdown */}
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h8m-8 6h16"
+                />
               </svg>
             </div>
 
-            <ul className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow bg-base-100 rounded-box w-52 space-y-1">
+            <ul className="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow bg-base-100/70 rounded-box w-52 space-y-1 backdrop-blur">
               {userConfig.map((page) => (
                 <li key={page.path}>
                   <NavLink
@@ -52,14 +63,12 @@ const UserLayout = () => {
                   className={({ isActive }) =>
                     `rounded-lg px-3 py-2 font-medium transition ${isActive
                       ? "bg-primary text-primary-content"
-                      : "bg-base-200/60 hover:bg-base-300"
+                      : "bg-base-200/60 hover:bg-base-300/70"
                     }`
                   }
                 >
                   {page.title}
                 </NavLink>
-
-
               </li>
             ))}
           </ul>
@@ -83,5 +92,6 @@ const UserLayout = () => {
     </div>
   );
 };
+
 
 export default UserLayout;

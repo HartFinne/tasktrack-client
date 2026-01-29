@@ -22,7 +22,7 @@ const UsersList = ({ limit }) => {
   });
 
   return (
-    <div className="mt-2 space-y-4 w-full text-base-content">
+    <div className="mt-0.5 space-y-4 w-full text-base-content">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-xl font-bold">
@@ -56,7 +56,7 @@ const UsersList = ({ limit }) => {
       {/* TABLE CONTAINER */}
       <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
         <table className="table">
-          <thead className="bg-base-200 text-base-content">
+          <thead className="bg-base-300 text-base-content">
             <tr>
               <th>Email</th>
               <th>Role</th>
@@ -99,7 +99,7 @@ const UsersList = ({ limit }) => {
                   <td className="font-medium w-[50%]">{userItem.email}</td>
 
                   <td>
-                    <span className="badge badge-secondary badge-outline capitalize">
+                    <span className="capitalize">
                       {userItem.role}
                     </span>
                   </td>

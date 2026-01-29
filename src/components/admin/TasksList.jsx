@@ -17,16 +17,12 @@ const TasksList = ({ limit }) => {
   const { lastUid, page, hasPrev, nextPage, prevPage, resetPagination } = useCursorPagination();
 
   const {
-    data: tasksData = { tasks: [], lastUid: null, hasNext: false },
-    isPending,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["tasks", lastUid, statusFilter],
-    queryFn: () => fetchTasks(user.token, limit, lastUid, statusFilter),
-    staleTime: 60 * 1000,
-    enabled: !!user?.token,
-  });
+    data: tasksData = { tasks: [], lastUid: null, hasNext: false }, isPending, isError, error, } = useQuery({
+      queryKey: ["tasks", lastUid, statusFilter],
+      queryFn: () => fetchTasks(user.token, limit, lastUid, statusFilter),
+      staleTime: 60 * 1000,
+      enabled: !!user?.token,
+    });
 
   const getStatusBadge = (status) => {
     if (status === "backlog") return "badge badge-ghost";
@@ -107,7 +103,7 @@ const TasksList = ({ limit }) => {
       {isPending && (
         <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
           <table className="table">
-            <thead className="bg-base-200 text-base-content">
+            <thead className="bg-base-300 text-base-content">
               <tr>
                 <th>Task</th>
                 <th>Assigned To</th>
@@ -152,7 +148,7 @@ const TasksList = ({ limit }) => {
       {!isPending && !isError && tasksData.tasks.length > 0 && (
         <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
           <table className="table">
-            <thead className="bg-base-200 text-base-content">
+            <thead className="bg-base-300 text-base-content">
               <tr>
                 <th className="w-[50%]">Task</th>
                 <th >Assigned To</th>
