@@ -7,7 +7,7 @@ const formatLabel = (value) => {
 const Filter = ({ options = [], value, onChange, className = "" }) => {
   return (
     <select
-      className={`select select-bordered w-full sm:w-auto ${className}`}
+      className={`select select-primary w-full sm:w-auto ${className}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >

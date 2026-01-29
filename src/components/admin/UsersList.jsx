@@ -8,15 +8,15 @@ import { useState } from "react";
 
 const UsersList = ({ limit }) => {
   const { user } = useAuth();
-  const [roleFilter, setRoleFilter] = useState("employee");
-  const USER_ROLE = ["employee", "admin"];
+  const [roleFilter, setRoleFilter] = useState("all");
+  const USER_ROLE = ["all", "employee", "admin"];
 
   // Cursor pagination for users
-  const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
+  const { lastUid, page, hasPrev, nextPage, prevPage, resetPagination } = useCursorPagination();
 
-  const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useQuery({
-    queryKey: ["users", lastUid],
-    queryFn: () => fetchUsers(user.token, limit, lastUid),
+  const { data: usersData = { users: [], lastUid: null, hasNext: false }, isPending, isError, error } = useQuery({
+    queryKey: ["users", lastUid, roleFilter],
+    queryFn: () => fetchUsers(user.token, limit, lastUid, roleFilter),
     staleTime: 60 * 1000,
     enabled: !!user?.token,
   });
@@ -113,7 +113,7 @@ const UsersList = ({ limit }) => {
         <Pagination
           onNext={() => nextPage(usersData.lastUid)}
           onPrev={prevPage}
-          hasNext={!!usersData.lastUid}
+          hasNext={usersData.hasNext}
           hasPrev={hasPrev}
           page={page}
         />
