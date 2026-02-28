@@ -1,22 +1,24 @@
-// RedirectByRole.jsx
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const RedirectByRole = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!user) return;
 
+    if (user.role === "admin") {
+      navigate("/admin/dashboard", { replace: true });   // 🔥 key fix
+    } else if (user.role === "employee") {
+      navigate("/dashboard", { replace: true }); // 🔥 key fix
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
-  if (user.role === "admin") {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
-  if (user.role === "employee") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return null;
+  return null; // nothing to render
 };
 
 export default RedirectByRole;

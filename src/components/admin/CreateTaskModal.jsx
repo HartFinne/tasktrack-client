@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { createTask } from "../../api/createTask";
+import { createTask } from "../../api/taskApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../components/Toast"
 
@@ -18,9 +18,9 @@ const CreateTaskModal = () => {
       setToastType("success");
       setToastMessage("Succesfully created task!");
     },
-    onError: () => {
+    onError: (error) => {
       setToastType("error");
-      setToastMessage(err.message || "Something went wrong");
+      setToastMessage(error.message || "Something went wrong");
     }
   });
 

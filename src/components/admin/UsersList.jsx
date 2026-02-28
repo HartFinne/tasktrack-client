@@ -1,81 +1,129 @@
-import Pagination from "../../components/admin/Pagination";
+import Pagination from "../Pagination";
+import Filter from "./Filter";
 import { useCursorPagination } from "../../hooks/useCursorPagination";
-import { fetchUsers } from "../../api/fetchUsers";
+import { fetchUsers } from "../../api/userApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 const UsersList = ({ limit }) => {
   const { user } = useAuth();
+  const [roleFilter, setRoleFilter] = useState("all");
+  const USER_ROLE = ["all", "employee", "admin"];
 
   // Cursor pagination for users
-  const { lastUid, page, hasPrev, nextPage, prevPage } = useCursorPagination();
+  const { lastUid, page, hasPrev, nextPage, prevPage, resetPagination } = useCursorPagination();
 
-  const { data: usersData = { users: [], lastUid: null }, isPending, isError, error } = useQuery({
-    queryKey: ["users", lastUid],
-    queryFn: () => fetchUsers(user.token, limit, lastUid),
-    staleTime: Infinity,
+  const { data: usersData = { users: [], lastUid: null, hasNext: false }, isPending, isError, error } = useQuery({
+    queryKey: ["users", lastUid, roleFilter],
+    queryFn: () => fetchUsers(user.token, limit, lastUid, roleFilter),
+    staleTime: 60 * 1000,
     enabled: !!user?.token,
   });
 
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">Users</h2>
+    <div className="mt-0.5 space-y-4 w-full text-base-content">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+        <div className="flex items-center gap-2 text-xl font-bold">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="h-5 w-5 text-primary"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"
+            />
+          </svg>
+          Users
 
-        <Pagination
-          onNext={() => nextPage(usersData.lastUid)}
-          onPrev={prevPage}
-          hasNext={!!usersData.lastUid}
-          hasPrev={hasPrev}
-          page={page}
-        />
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+          <Filter
+            className="w-full sm:w-48 md:w-60 lg:w-72"
+            options={USER_ROLE}
+            value={roleFilter}
+            onChange={(newStatus) => {
+              setRoleFilter(newStatus);
+              resetPagination();
+            }}
+          />
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr className="text-center">
-              <th>#</th>
+      {/* TABLE CONTAINER */}
+      <div className="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-sm">
+        <table className="table">
+          <thead className="bg-base-300 text-base-content">
+            <tr>
               <th>Email</th>
               <th>Role</th>
             </tr>
           </thead>
-          <tbody>
-            {isPending && Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="text-center">
-                <td><div className="skeleton h-4 w-6 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-40 mx-auto"></div></td>
-                <td><div className="skeleton h-4 w-24 mx-auto"></div></td>
-              </tr>
-            ))}
 
+          <tbody>
+            {/* Skeleton Loader */}
+            {isPending &&
+              Array.from({ length: limit - 1 }).map((_, i) => (
+                <tr key={i} className="animate-pulse">
+                  <td><div className="h-4 w-48 bg-base-300 rounded"></div></td>
+                  <td><div className="h-6 w-20 bg-base-300 rounded"></div></td>
+                </tr>
+              ))}
+
+            {/* Error */}
             {isError && (
               <tr>
-                <td colSpan={3} className="text-center text-red-600">
+                <td colSpan="3" className="text-center text-error py-6">
                   Error loading users: {error.message}
                 </td>
               </tr>
             )}
 
+            {/* Empty State */}
             {!isPending && !isError && usersData.users.length === 0 && (
               <tr>
-                <td colSpan={3} className="text-center text-gray-500">
+                <td colSpan="3" className="text-center text-base-content/70 py-6">
                   No users found.
                 </td>
               </tr>
             )}
 
-            {!isPending && !isError && usersData.users.map((userItem, index) => (
-              <tr key={userItem.uid} className="text-center hover:bg-base-300">
-                <td>{(page - 1) * limit + index + 1}</td>
-                <td>{userItem.email}</td>
-                <td><span className="badge badge-info">{userItem.role}</span></td>
-              </tr>
-            ))}
+            {/* Users */}
+            {!isPending &&
+              !isError &&
+              usersData.users.map((userItem) => (
+                <tr key={userItem.uid} className="hover:bg-base-200 cursor-pointer">
+                  <td className="font-medium w-[50%]">{userItem.email}</td>
+
+                  <td>
+                    <span className="capitalize">
+                      {userItem.role}
+                    </span>
+                  </td>
+
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
+      <div className="flex justify-end">
+        <Pagination
+          onNext={() => nextPage(usersData.lastUid)}
+          onPrev={prevPage}
+          hasNext={usersData.hasNext}
+          hasPrev={hasPrev}
+          page={page}
+        />
+      </div>
     </div>
+
   );
 };
 

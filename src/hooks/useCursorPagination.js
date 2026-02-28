@@ -21,12 +21,19 @@ export function useCursorPagination() {
     setPage(prev => Math.max(prev - 1, 1));
   };
 
+  // 🔥 ADD THIS
+  const resetPagination = () => {
+    setLastUid(null);
+    setHistory([]);
+    setPage(1);
+  };
+
   return {
     lastUid,
     page,
     hasPrev: history.length > 0,
-    setLastUid,
     nextPage,
     prevPage,
+    resetPagination, // 👈 export it
   };
 }

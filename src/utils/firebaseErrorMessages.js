@@ -1,3 +1,13 @@
+export const getFirebaseErrorMessage = (error) => {
+  console.log("Firebase error code:", error?.code);
+
+  if (error?.code && firebaseErrorMessages[error.code]) {
+    return firebaseErrorMessages[error.code];
+  }
+
+  return firebaseErrorMessages.default;
+};
+
 export const firebaseErrorMessages = {
   // Email issues
   "auth/email-already-exists": "This email is already registered. Please use a different email",
@@ -8,11 +18,8 @@ export const firebaseErrorMessages = {
 
   // Password issues
   "auth/weak-password": "Password must be at least 6 characters.",
-  "auth/invalid-password": "Invalid password. It must be at least 6 characters.",
-  "password-no-uppercase": "Password must contain at least one uppercase letter.",
-  "password-no-lowercase": "Password must contain at least one lowercase letter.",
-  "password-no-number": "Password must contain at least one number.",
-  "password-no-special": "Password must contain at least one special character.",
+  "auth/password-does-not-meet-requirements":
+    "Password must be at least 6 characters and include uppercase, lowercase, and a special character.",
 
   // User issues
   "auth/user-disabled": "This account has been disabled. Contact support for help.",

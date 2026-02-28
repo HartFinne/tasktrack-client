@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { signUp } from "../../api/authApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import RedirectByRole from "../../components/RedirectByRole.jsx";
 import FormInput from "../../components/auth/FormInput.jsx";
-import Card from "../../components/auth/Card.jsx";
 import FormButton from "../../components/auth/FormButton.jsx";
 import Toast from "../../components/Toast.jsx";
 import Loading from "../../components/Loading.jsx";
+
+import { getFirebaseErrorMessage } from "../../utils/firebaseErrorMessages.js";
 
 const SignUp = () => {
   const { user, loading: authLoading } = useAuth();
@@ -30,6 +31,8 @@ const SignUp = () => {
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+  const queryClient = useQueryClient();
+
   // React Query mutation
   const signUpMutation = useMutation({
     mutationFn: ({ email, password }) => signUp(email, password),
@@ -42,16 +45,13 @@ const SignUp = () => {
       setEmail("");
       setPassword("");
       setRePassword("");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
 
-      // Redirect to login
-      setTimeout(() => {
-        navigate("/", { replace: true });
-      }, 2000);
     },
 
     onError: (err) => {
       setToastType("error");
-      setToastMessage(err.message || "Something went wrong");
+      setToastMessage(getFirebaseErrorMessage(err));
     }
   });
 
@@ -87,14 +87,14 @@ const SignUp = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4
-        bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10
+        bg-linear-to-br from-primary/10 via-base-200 to-secondary/10
         dark:from-primary/20 dark:via-base-300 dark:to-secondary/20
         relative overflow-hidden"
     >
       {/* Soft glow behind card */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[420px] h-[420px] rounded-full
-          bg-gradient-to-br from-primary/20 to-secondary/20
+        <div className="w-105 h-105 rounded-full
+          bg-linear-to-br from-primary/20 to-secondary/20
           blur-3xl opacity-60">
         </div>
       </div>
@@ -173,7 +173,7 @@ const SignUp = () => {
           </form>
 
           {/* Footer */}
-          <div className="divider my-6">OR</div>
+          <div className="divider">OR</div>
 
           <p className="text-center text-sm ">
             Already have an account?

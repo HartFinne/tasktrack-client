@@ -1,13 +1,17 @@
-// src/layout/UserLayout.jsx
-import { Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+
 import { userConfig } from "../routes/userConfig";
 
 const UserLayout = () => {
+  const { logout } = useAuth();
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-base-200">
       {/* Navbar */}
-      <div className="navbar bg-base-100 shadow-sm">
-        <div className="navbar-start">
+      <div className="navbar sticky top-0 z-50 bg-base-100/30 backdrop-blur border-b border-base-300 px-4 lg:px-8">
+        {/* Left: Brand + Mobile Menu */}
+        <div className="navbar-start gap-2">
           {/* Mobile dropdown */}
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -26,44 +30,68 @@ const UserLayout = () => {
                 />
               </svg>
             </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
-            >
+
+            <ul className="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow bg-base-100/70 rounded-box w-52 space-y-1 backdrop-blur">
               {userConfig.map((page) => (
-                <li key={page.path}> {/* ✅ Add key */}
-                  <Link to={page.path}>{page.title}</Link>
+                <li key={page.path}>
+                  <NavLink
+                    to={page.path}
+                    className={({ isActive }) =>
+                      isActive ? "active font-semibold" : ""
+                    }
+                  >
+                    {page.title}
+                  </NavLink>
                 </li>
               ))}
-
             </ul>
           </div>
-          <a className="btn btn-ghost text-xl">TaskTrack</a>
+
+          {/* Brand */}
+          <span className="text-xl font-bold tracking-tight text-primary">
+            TaskTrack
+          </span>
         </div>
 
-        {/* Desktop menu */}
+        {/* Center: Desktop Nav */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
+          <ul className="menu menu-horizontal px-1 gap-2">
             {userConfig.map((page) => (
-              <li key={page.path}> {/* ✅ Add key */}
-                <Link to={page.path}>{page.title}</Link>
+              <li key={page.path}>
+                <NavLink
+                  to={page.path}
+                  className={({ isActive }) =>
+                    `rounded-lg px-3 py-2 font-medium transition ${isActive
+                      ? "bg-primary text-primary-content"
+                      : "bg-base-200/50 hover:bg-base-300"
+                    }`
+                  }
+                >
+                  {page.title}
+                </NavLink>
               </li>
             ))}
-
           </ul>
         </div>
 
+        {/* Right: Actions */}
         <div className="navbar-end">
-          <a className="btn">Logout</a>
+          <button
+            onClick={logout}
+            className="btn btn-sm btn-soft btn-error hover:btn-error hover:text-white transition"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
       {/* Page content */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 lg:p-8">
         <Outlet />
       </div>
     </div>
   );
 };
+
 
 export default UserLayout;
